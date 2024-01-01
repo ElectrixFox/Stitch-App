@@ -260,20 +260,12 @@ return (day + mon);
 
 function ClearWipRecord()
 {
-var monindex = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
-var daysinmo = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
-var curmon = 0;
+var yr = GetActiveYear();
 
-var ncol = ReadKeyItem('WipRecord2024'.concat("#COLS"));
-var nrow = ReadKeyItem('WipRecord2024'.concat("#ROWS"));
+var ncol = ReadKeyItem('WipRecord'.concat(yr, "#COLS"));
+var nrow = ReadKeyItem('WipRecord'.concat(yr, "#ROWS"));
 
-var year = 2024;
-
-// find which month it is
-if ((year % 4) == 0)
-    {
-    daysinmo[1] = 29;
-    }
+var year = parsGetActiveYear();
 
 console.log(ncol, nrow);
 
@@ -290,7 +282,7 @@ for (let i = 0; i < nrow; i++)
         }
     }
 
-CreateTable('WipRecord2024', wiprecord);
+CreateTable('WipRecord'.concat(yr), wiprecord);
 }
 
 function Setup()
@@ -351,20 +343,23 @@ table.setAttribute("id", "table");
 document.body.appendChild(table);
 }
 
-function InitialiseMonthView(month)
+function GetQueryParameter(name) 
+{
+const urlParams = new URLSearchParams(window.location.search);
+return urlParams.get(name);
+}
+
+// if extras then returns month start index, current month and year
+function GetActiveMonth(extras = 0)
 {
 var monindex = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 var daysinmo = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
 var curmon = 0;
 var monstindx = 0;
 
-var year = 2024;
+var year = GetQueryParameter('year');
 
-// loading in the tables
-var wiptable = LoadTable('Wips');
-var wiprecord = LoadTable('WipRecord2024');
-
-console.log("InitialiseMonthView");
+var month = GetQueryParameter('month');
 
 // find which month it is
 if ((year % 4) == 0)
@@ -383,8 +378,51 @@ for (var i = 0; i < 12; i++)
     monstindx += daysinmo[i];
     }
 
+if (extras == 1)
+    {
+    return [ curmon, year, monstindx ];
+    }
+
+return curmon;
+}
+
+function GetActiveYear() { return GetQueryParameter('year'); }
+
+function InitialiseWipsViewer()
+{
+var wiptable = LoadTable('Wips');
+
+wiptable.unshift([ "Name", "Start Date", "Finish Date", "Designer", "Fabric", "Floss", "Notes" ]);
+
+CreateHTMLTable(wiptable);
+
+var table = document.getElementById("table");
+table.setAttribute("class", "wips");
+table.setAttribute("id", "table");
+
+for (let i = 0; i < table.rows[0].cells.length; i++)
+    {
+    table.rows[0].cells[i].contentEditable = false;
+    }
+}
+
+function InitialiseMonthView()
+{
+var daysinmo = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
+
+console.log("InitialiseMonthView");
+
+var mondetails = GetActiveMonth(1);
+var curmon = mondetails[0];
+var year = mondetails[1];
+var monstindx = mondetails[2];
+
+// loading in the tables
+var wiptable = LoadTable('Wips');
+var wiprecord = LoadTable('WipRecord'.concat(year));
+
 // find all of the projects for that month
-var projlocs = FindProjectsInMonth(wiptable, i + 1);
+var projlocs = FindProjectsInMonth(wiptable, curmon + 1);
 var endtindx = monstindx + daysinmo[curmon];
 
 // find all of the start dates
@@ -438,36 +476,34 @@ for (let i = 0; i < projlocs.length; i++)
     }
 
 CreateHTMLTable(itab);
+
+var table = document.getElementById("table");
+table.setAttribute('class', "tracker");
+table.setAttribute("id", "table");
+
+for (let i = 0; i < table.rows[0].cells.length; i++)
+    {
+    table.rows[0].cells[i].contentEditable = false;
+    }
+
+for (let i = 0; i < table.rows.length; i++)
+    {
+    table.rows[i].cells[0].contentEditable = false;
+    }
 }
 
 function SaveWipRecordTable(cells, topleft)
 {
-var monindex = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 var daysinmo = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
-var curmon = 0;
-var monstindx = 0;
-var year = 2024;
-var month = "Jan";
 
-var wiprecord = LoadTable('WipRecord2024');
+var mondetails = GetActiveMonth(1);
+var curmon = mondetails[0];
+var year = mondetails[1];
+var monstindx = mondetails[2];
+
+// loading in the tables
 var wiptable = LoadTable('Wips');
-
-// find which month it is
-if ((year % 4) == 0)
-    {
-    daysinmo[1] = 29;
-    }
-
-// getting the current month
-for (var i = 0; i < 12; i++)
-    {
-    if (month === monindex[i])
-        {
-        curmon = i;
-        break;
-        }
-    monstindx += daysinmo[i];
-    }
+var wiprecord = LoadTable('WipRecord'.concat(year));
 
 // find all of the projects for that month
 var projlocs = FindProjectsInMonth(wiptable, i + 1);
@@ -518,14 +554,14 @@ console.log("SaveHTMLTable");
 
 switch (tableid) 
     {
-    case 'WipRecord2024':
+    case 'WipRecord':
         {
         SaveWipRecordTable(cells, topleft);
         break;
         }
     case 'Wips':
         {
-        SaveWipRecordTable(cells, topleft);
+        SaveWipsTable(cells, topleft);
         break;
         }
     default:
@@ -534,3 +570,25 @@ switch (tableid)
         }
     }
 }
+
+function ToggleYearDropDown() 
+{
+document.getElementById("yeardropdwn").classList.toggle("show");
+}
+  
+
+window.onclick = function(event) 
+    {
+    if (!event.target.matches('.yrdropbtn')) 
+        {
+        var dropdowns = document.getElementsByClassName("yrdropdown-content");
+        for (var i = 0; i < dropdowns.length; i++)
+            {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) 
+                {
+                openDropdown.classList.remove('show');
+                }
+            }
+        }
+    }
