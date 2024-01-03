@@ -74,20 +74,34 @@ for (let x = 0; x < nrows; x++)
 return cells;
 }
 
-function NormaliseTable(table)
+function NormaliseTable(table, nrows = 0, ncols = 0)
 {
-var cells = new Array();
+var cells = new Array(nrows);
 
-var nrow = table.rows.length;
-var ncol = table.rows[0].cells.length;
 
-for (let i = 0; i < nrow; i++)
+console.log(nrows, ncols);
+
+if(nrows == 0)
+    {
+    nrows = table.rows.length;
+    }
+if(ncols == 0)
+    {
+    ncols = table.rows[0].cells.length;
+    }
+
+console.log(nrows, ncols);
+
+for (let i = 0; i < nrows; i++)
     {
     // creates new array for each row
-    cells[i] = new Array(ncol + 1);
+    cells[i] = new Array(ncols + 1);
 
-    for (let j = 0; j < ncol; j++)
+    console.log(table.rows[i]);
+
+    for (let j = 0; j < ncols; j++)
         {
+        console.log(i, j);
         cells[i][j] = GetCellText(i, j, table);
         }
     }
@@ -138,11 +152,12 @@ for (let i = 0; i < nrows; i++)
 function LoadRowsSpecial(tableid, topleft)
 {
 var table = document.getElementById("table");
-var ncol = ReadKeyItem(tableid.concat("#COLS"));
-var nrow = ReadKeyItem(tableid.concat("#ROWS"));
+console.log(tableid);
+cells = LoadTable(tableid);
+var ncol = cells[0].length - 1;
+var nrow = cells.length - 1;
 
-console.log(nrow, ncol);
-console.log(table.rows.length);
+console.log(ncol, nrow);
 
 var cells = new Array();
 
@@ -150,8 +165,6 @@ for (let i = 0; i < nrow; i++)
     {
     InsertTableRow(table, topleft[1], ncol);
     }
-
-cells = LoadTableFromFile(tableid);
 
 for (let i = 0; i < nrow; i++)
     {
@@ -162,32 +175,7 @@ for (let i = 0; i < nrow; i++)
     }
 }
 
-function LoadRows(tableid)
-{
-var table = document.getElementById("table");
-var ncol = ReadKeyItem(tableid.concat("#COLS"));
-var nrow = ReadKeyItem(tableid.concat("#ROWS"));
-
-console.log(nrow, ncol);
-console.log(table.rows.length);
-
-var cells = new Array();
-
-for (let i = 0, x = !(table.rows.length < 2); i < nrow; i++)
-    {
-    InsertTableRow(table, x, ncol);
-    }
-
-cells = LoadTableFromFile(tableid);
-
-for (let i = 0; i < nrow; i++)
-    {
-    for (let j = 0; j < ncol; j++)
-        {
-        SetCellText(i + 1, j, table, cells[i][j]);
-        }
-    }
-}
+function LoadRowsSpecialYr(tableid, topleft) { LoadRowsSpecial(tableid.concat(GetActiveYear()), topleft); }
 
 function SaveRows(tableid)
 {
@@ -211,8 +199,6 @@ for (let index = 0; index < numcol; index++) {
     cells[index] = nrow.insertCell(index);
     cells[index].contentEditable = true;
     }
-
-//saveRows();
 }
 
 function FindProjectsInMonth(intable, month)
@@ -222,11 +208,17 @@ var top = 0;
 
 for (let i = 0; i < intable.length; i++)
     {
-    let mon = intable[i][1].slice(3, 5);
+    let stmon = parseInt(intable[i][1].slice(3, 5), 10);
+    let enmon;
 
-    if (parseInt(mon, 10) == month)
+    if(intable[i][2] == "")
+        enmon = month
+    else 
+        enmon = parseInt(intable[i][2].slice(3, 5), 10);
+
+    if ((stmon <= month) && (enmon >= month))
         {
-        //console.log(wiptable[i][0]);
+        //console.log(intable[i][0]);
         wiplocs[top++] = i;
         }
     }
@@ -234,7 +226,7 @@ for (let i = 0; i < intable.length; i++)
 return wiplocs;
 }
 
-function GetDateDay(indate) { return parseInt(indate.slice(0, 2)); }
+function GetDateDay(indate) { return parseInt(indate.slice(0, 2), 10); }
 
 function GetWIPStartDay(wiptable, wiploc)
 {
@@ -247,6 +239,29 @@ function GetWipStartDate(wiptable, wiploc) { return wiptable[wiploc][1]; }
 
 function GetWipEndDate(wiptable, wiploc) { return wiptable[wiploc][2]; }
 
+function CalcDaysToDate(indate)
+{
+var daysinmo = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
+
+let day = parseInt(indate.slice(0, 2));
+let mon = parseInt(indate.slice(3, 5));
+let yrs = parseInt(indate.slice(6, 10));
+
+var tot = day;
+
+if(yrs % 4 == 0)
+    {
+    daysinmo[1] = 29;
+    }
+
+for (let i = 0; i < mon - 1; i++)
+    {
+    tot += daysinmo[i];
+    }
+
+return tot;
+}
+
 function CalcNumericalDate(indate)
 {
 // 0123456789
@@ -255,17 +270,15 @@ let day = parseInt(indate.slice(0, 2));
 let mon = parseInt(indate.slice(3, 5));
 let yrs = parseInt(indate.slice(6, 10));
 
-return (day + mon);
+return (day + 100 * mon);
 }
 
 function ClearWipRecord()
 {
 var yr = GetActiveYear();
 
-var ncol = ReadKeyItem('WipRecord'.concat(yr, "#COLS"));
-var nrow = ReadKeyItem('WipRecord'.concat(yr, "#ROWS"));
-
-var year = parsGetActiveYear();
+var ncol = 365 + ((yr % 4 == 0) ? 1 : 0);
+var nrow = ReadKeyItem('Wips'.concat(yr, "#ROWS"));
 
 console.log(ncol, nrow);
 
@@ -287,28 +300,10 @@ CreateTable('WipRecord'.concat(yr), wiprecord);
 
 function Setup()
 {
-var cells = [ [ "Gavin", 1, 2, 3, 4 ], ["Barry", 4, 3, 2, 1] ];
-
-console.log("Outputting Created Table");
-
-for (let i = 0; i < 2; i++)
-    {
-    console.log(cells[i]);
-    }
-
-
-console.log("Creating Table");
-CreateTable('TestTable', cells);
-
-console.log("Loading Table");
-var ncells = LoadTable('TestTable');
-
-console.log("Outputting Loaded Table");
-
-for (let i = 0; i < ncells.length; i++)
-    {
-    console.log(ncells[i]);
-    }
+CreateTable("Wips2023", [""]);
+CreateTable('WipRecord2023', ["*"]);
+CreateTable("Wips2024", [""]);
+CreateTable('WipRecord2024', ["*"]);
 }
 
 function CreateHTMLTable(celldata, nrows = 0, ncols = 0)
@@ -390,7 +385,9 @@ function GetActiveYear() { return GetQueryParameter('year'); }
 
 function InitialiseWipsViewer()
 {
-var wiptable = LoadTable('Wips');
+var yr = GetActiveYear();
+console.log(yr);
+var wiptable = LoadTable('Wips'.concat(yr));
 
 wiptable.unshift([ "Name", "Start Date", "Finish Date", "Designer", "Fabric", "Floss", "Notes" ]);
 
@@ -404,11 +401,28 @@ for (let i = 0; i < table.rows[0].cells.length; i++)
     {
     table.rows[0].cells[i].contentEditable = false;
     }
+
+var row = document.createElement("tr");
+var ted = document.createElement("td");
+
+var nrowbtndv = document.createElement("div");
+nrowbtndv.className = "add-button";
+
+var addbtn = document.createElement("button");
+addbtn.textContent = "New WIP";
+addbtn.onclick = AddRow;
+
+nrowbtndv.appendChild(addbtn);
+ted.appendChild(nrowbtndv);
+ted.setAttribute("colspan", table.rows[0].cells.length);
+row.appendChild(ted);
+table.appendChild(row);
 }
 
 function InitialiseMonthView()
 {
 var daysinmo = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
+const mnams = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
 
 console.log("InitialiseMonthView");
 
@@ -417,31 +431,49 @@ var curmon = mondetails[0];
 var year = mondetails[1];
 var monstindx = mondetails[2];
 
+if (year % 4 == 0)
+    {
+    daysinmo[1] = 29;
+    }
+
+document.getElementById("Header").textContent = mnams[curmon];
+
 // loading in the tables
-var wiptable = LoadTable('Wips');
+var wiptable = LoadTable('Wips'.concat(year));
 var wiprecord = LoadTable('WipRecord'.concat(year));
+
+console.table(wiptable);
+console.table(wiprecord);
 
 // find all of the projects for that month
 var projlocs = FindProjectsInMonth(wiptable, curmon + 1);
 var endtindx = monstindx + daysinmo[curmon];
 
+console.log(wiprecord[0]);
+console.log(projlocs.length);
+
 // find all of the start dates
 for (let i = 0; i < projlocs.length; i++)
     {
     var stdt = GetWipStartDate(wiptable, projlocs[i]);
-    var numdate = CalcNumericalDate(stdt);
+    var numdate = CalcDaysToDate(stdt);
+
+    if(wiprecord[i].length < daysinmo[curmon])
+        {
+        wiprecord[i] = [];
+        }
 
     if ((monstindx < numdate) && (numdate <= endtindx))
         {
-        wiprecord[i][GetDateDay(stdt) - 1] = "N";
+        wiprecord[i][monstindx + parseInt(GetDateDay(stdt) - 1, 10)] = "N";
         }
 
     var endt = GetWipEndDate(wiptable, projlocs[i]);
-    numdate = CalcNumericalDate(endt);
+    numdate = CalcDaysToDate(endt);
 
     if ((monstindx < numdate) && (numdate <= endtindx))
         {
-        wiprecord[i][GetDateDay(endt) - 1] = "F";
+        wiprecord[i][monstindx + GetDateDay(endt) - 1] = "F";
         }
     }
 
@@ -453,14 +485,18 @@ for (let i = 0; i < projlocs.length; i++)
         }
     } */
 
+
 var itab = wiprecord;
 
+// copying the data for the month into a separate variable
 for (let i = 0; i < itab.length; i++)
     {
+    console.log("Flag 1");
     itab[i] = itab[i].slice(monstindx, endtindx);
     }
 
 var drow = [ "Project Name" ];
+
 // adding the days row
 for (let i = 0; i < daysinmo[curmon]; i++)
     {
@@ -475,7 +511,9 @@ for (let i = 0; i < projlocs.length; i++)
     itab[i + 1].unshift(projnam);
     }
 
-CreateHTMLTable(itab);
+console.table(itab);
+
+CreateHTMLTable(itab, projlocs.length+1, daysinmo[curmon] + 1);
 
 var table = document.getElementById("table");
 table.setAttribute('class', "tracker");
@@ -502,11 +540,11 @@ var year = mondetails[1];
 var monstindx = mondetails[2];
 
 // loading in the tables
-var wiptable = LoadTable('Wips');
+var wiptable = LoadTable('Wips'.concat(year));
 var wiprecord = LoadTable('WipRecord'.concat(year));
 
 // find all of the projects for that month
-var projlocs = FindProjectsInMonth(wiptable, i + 1);
+var projlocs = FindProjectsInMonth(wiptable, curmon + 1);
 var endtindx = monstindx + daysinmo[curmon];
 
 for (let i = 0; i < projlocs.length; i++)
@@ -517,38 +555,39 @@ for (let i = 0; i < projlocs.length; i++)
         }
     }
 
-CreateTable(tableid, wiprecord);
+CreateTable('WipRecord'.concat(year), wiprecord);
 }
 
 function SaveWipsTable(cells, topleft)
 {
-var table = document.getElementById("table");
-var wiptable = LoadTable('Wips');
+var wiptable = LoadTable('Wips'.concat(GetActiveYear()));
 
-var nrow = table.rows.length - 1;
-var ncol = table.rows[0].cells.length;
+var nrow = cells.length - 1;
+var ncol = cells[0].length - 1;
 
-var cells = NormaliseTable(table);
+console.log(nrow, ncol);
 
 for (let i = 0; i < nrow; i++)
     {
+    console.log(cells[i]);
+    }
+
+for (let i = 0; i < nrow; i++)
+    {
+    wiptable[i] = new Array(ncol);
+
     for (let j = 0; j < ncol; j++)
         {
         wiptable[i][j] = cells[i + topleft[1]][j + topleft[0]];
         }
     }
 
-CreateTable('Wips', wiptable);
+CreateTable('Wips'.concat(GetActiveYear()), wiptable);
 }
 
 function SaveHTMLTable(tableid, topleft)
 {
 var table = document.getElementById("table");
-
-var nrow = table.rows.length - 1;
-var ncol = table.rows[0].cells.length;
-
-var cells = NormaliseTable(table);
 
 console.log("SaveHTMLTable");
 
@@ -556,11 +595,14 @@ switch (tableid)
     {
     case 'WipRecord':
         {
+        var cells = NormaliseTable(table);
         SaveWipRecordTable(cells, topleft);
         break;
         }
     case 'Wips':
         {
+        console.log(table.rows.length, table.rows[0].cells.length);
+        var cells = NormaliseTable(table, table.rows.length - 1, table.rows[0].cells.length);
         SaveWipsTable(cells, topleft);
         break;
         }
@@ -575,7 +617,15 @@ function ToggleYearDropDown()
 {
 document.getElementById("yeardropdwn").classList.toggle("show");
 }
-  
+
+function SetCurrentYear()
+{
+var wiplnk = document.querySelectorAll('.menubar a');
+wiplnk.forEach(function(link) 
+    {
+    link.href = link.href.replace(/year=\d{4}/, "year=" + GetActiveYear());
+    });
+}
 
 window.onclick = function(event) 
     {
@@ -590,5 +640,24 @@ window.onclick = function(event)
                 openDropdown.classList.remove('show');
                 }
             }
+        for (var i = 0; i < 12; i++)
+            {
+            document.get
+            }
         }
     }
+
+function ChangeYear(selyr) 
+{
+var wiplnk = document.querySelectorAll('.menubar a');
+wiplnk.forEach(function(link) 
+    {
+    link.href = link.href.replace(/year=\d{4}/, "year=" + selyr);
+    });
+
+var monlnk = document.querySelectorAll('.monbar a');
+monlnk.forEach(function(link) 
+    {
+    link.href = link.href.replace(/year=\d{4}/, "year=" + selyr);
+    });
+}

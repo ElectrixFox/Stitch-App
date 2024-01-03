@@ -11,9 +11,9 @@
 
     <nav class="menubar">
         <ul>
-            <li><a href="index.html">Home</a> </li>
+            <li><a onclick="SetCurrentYear()" href="index.html?year=2024">Home</a> </li>
             <li><a href="#">New Starts</a> </li>
-            <li><a href="worksinprogress.html?year=2024">WIPS</a> </li>
+            <li><a onclick="SetCurrentYear()" href="worksinprogress.html?year=2024">WIPS</a> </li>
             <li><a href="#">Finishes</a> </li>
             <li><a href="#">Quick Links</a> </li>
         </ul>
@@ -21,8 +21,8 @@
     <div class="yrdrop">
         <button onclick="ToggleYearDropDown()" class="yrdropbtn">Year</button>
         <div id="yeardropdwn" class="yrdropdown-content">
-            <a href="#">2023</a>
-            <a href="#">2024</a>
+            <a href="#" onclick="ChangeYear('2023')">2023</a>
+            <a href="#" onclick="ChangeYear('2024')">2024</a>
         </div>   
     </div>
     <nav class="monbar">

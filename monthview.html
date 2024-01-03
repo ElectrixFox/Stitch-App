@@ -9,12 +9,12 @@
     <button onclick="ClearWipRecord()">Clear</button>
     <button onclick="SaveHTMLTable('WipRecord', [1, 1])">Save</button>
 
-    <h1> January </h1>
+    <h1 id="Header"> January </h1>
     <nav class="menubar">
         <ul>
-            <li><a href="index.html">Home</a> </li>
+            <li><a onclick="SetCurrentYear()" href="index.html?year=2024">Home</a> </li>
             <li><a href="#">New Starts</a> </li>
-            <li><a href="worksinprogress.html">WIPS</a> </li>
+            <li><a onclick="SetCurrentYear()" href="worksinprogress.html?year=2024">WIPS</a> </li>
             <li><a href="#">Finishes</a> </li>
             <li><a href="#">Quick Links</a> </li>
         </ul>

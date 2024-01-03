@@ -16,6 +16,7 @@ h1 {
     font-size: 16px;
     border: none;
     cursor: pointer;
+    display: inline-block;
   }
   
 .yrdropbtn:hover, .yrdropbtn:focus {
@@ -23,8 +24,8 @@ h1 {
 }
 
 .yrdrop {
-    position: relative;
-    float: right;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .yrdropdown-content {
