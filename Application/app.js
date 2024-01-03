@@ -454,6 +454,16 @@ document.getElementById("Header").textContent = mnams[curmon];
 var wiptable = LoadTable('Wips'.concat(year));
 var wiprecord = LoadTable('WipRecord'.concat(year));
 
+for(;wiprecord.length < wiptable.length;)
+    {
+    wiprecord[wiprecord.length] = new Array(365 + ((year % 4 == 0) ? 1 : 0));
+
+    for (let j = 0; j < wiprecord[wiprecord.length - 1].length; j++)
+        {
+        wiprecord[wiprecord.length - 1][j] = "*";
+        }
+    }
+
 console.table(wiptable);
 console.table(wiprecord);
 
@@ -470,13 +480,18 @@ var projlocs = FindProjectsInMonth(wiptable, curmon + 1);
 var endtindx = monstindx + daysinmo[curmon];
 
 console.log(wiprecord[0]);
-console.log(projlocs.length);
+console.log(wiprecord.length, projlocs.length);
 
 // find all of the start dates
 for (let i = 0; i < projlocs.length; i++)
     {
     var stdt = GetWipStartDate(wiptable, projlocs[i]);
     var numdate = CalcDaysToDate(stdt);
+
+    if(wiprecord.length <= i)
+        {
+        break;
+        }
 
     if(wiprecord[i].length < daysinmo[curmon])
         {
