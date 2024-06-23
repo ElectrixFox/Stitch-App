@@ -22,6 +22,9 @@ for (let index = 0; index < length; index++)
 function WriteKey(key, data) { localStorage.setItem(key, data); }
 function ReadKeyItem(key) { return localStorage.getItem(key); }
 
+function WriteJSONKey(key, data) { localStorage.setItem(key, data); }
+function ReadJSONKeyItem(key) { return localStorage.getItem(key); }
+
 // checks if a key exists
 function IsKey(key) { if (localStorage.getItem(key) == null) return 0; else return 1; }
 
@@ -149,6 +152,22 @@ for (let i = 0; i < nrows; i++)
     }
 }
 
+function WriteTableToJSONFile(tableid, nrows, ncols, cells)
+{
+WriteJSONKey(tableid.concat("#COLS"), ncols);
+WriteJSONKey(tableid.concat("#ROWS"), nrows);
+
+for (let i = 0; i < nrows; i++)
+    {
+    for (let j = 0; j < ncols; j++)
+        {
+        // getting the ID of the cell
+        celid = tableid.concat(i.toString(), j.toString());
+        WriteJSONKey(celid, cells[i][j]);
+        }
+    }
+}
+
 function LoadRowsSpecial(tableid, topleft)
 {
 var table = document.getElementById("table");
@@ -186,6 +205,7 @@ var ncol = table.rows[0].cells.length;
 
 var cells = NormaliseTable(table);
 WriteTableToFile(tableid, nrow - 1, ncol, cells);
+
 }
 
 function AddRow()
