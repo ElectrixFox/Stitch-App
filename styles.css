@@ -190,3 +190,27 @@ h1 {
 .tracker button:hover {
     background-color: rgb(232, 243, 252);
 }
+
+.context-menu {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* Ensure menu appears on top of other elements */
+}
+
+.context-menu ul {
+list-style-type: none;
+padding: 0;
+margin: 0;
+}
+
+.context-menu ul li {
+padding: 8px 12px;
+cursor: pointer;
+}
+
+.context-menu ul li:hover {
+background-color: #f0f0f0;
+}

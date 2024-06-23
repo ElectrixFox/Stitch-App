@@ -13,7 +13,17 @@ for (let index = 0; index < length; index++)
     }
 }
 
-function Clear() { ; }
+function Clear()
+{
+const table = document.getElementById('table').querySelector('table');
+const nrows = table.rows.length;
+
+for (let i = nrows - 2; i > 0; i--)
+    {
+    table.deleteRow(1);
+    }
+
+}
 
 function AddRow()
 {
@@ -42,9 +52,6 @@ monlnk.forEach(function(link)
     link.href = link.href.replace(/year=\d{4}/, "year=" + selyr);
     });
 }
-
-
-// new functions
 
 function NormaliseTableFromHTMLN(tableID)
 {
@@ -669,32 +676,79 @@ window.onload = function()
 SetCurrentYear();
 };
 
-const target = document.getElementById('target');
-  const contextMenu = document.getElementById('contextMenu');
-
-  // Prevent default context menu and show custom context menu
-  target.addEventListener('contextmenu', function(event) {
-    event.preventDefault();
-    
-    // Position the context menu near the cursor
-    contextMenu.style.display = 'block';
-    contextMenu.style.left = event.pageX + 'px';
-    contextMenu.style.top = event.pageY + 'px';
+document.addEventListener('contextmenu', function(e) {
+    if(e.target.closest('table') === null)
+        {
+        return;
+        }
+    else if (!isFirstOrLastRow(getRowUnderCursor(e)))
+        {
+        e.preventDefault();
+        showContextMenu(e);
+        }
   });
 
-  // Hide custom context menu on clicks outside of it
-  document.addEventListener('click', function(event) {
-    if (!contextMenu.contains(event.target)) {
-      contextMenu.style.display = 'none';
-    }
-  });
+function showContextMenu(e)
+{
+const contextMenu = document.getElementById('contextMenu');
+contextMenu.style.display = 'block';
+contextMenu.style.left = `${e.pageX}px`;
+contextMenu.style.top = `${e.pageY}px`;
 
-  // Handle custom menu item clicks (you can customize this further)
-  const menuItems = document.querySelectorAll('.context-menu-item');
-  menuItems.forEach(item => {
-    item.addEventListener('click', function() {
-      console.log('Clicked on:', item.textContent);
-      // Perform actions based on the clicked item
-      // For example: item.textContent might determine the action
+// Event listeners for context menu items
+document.getElementById('editRow').addEventListener('click', function()
+    {
+    // Implement edit row functionality
+    alert('Edit row clicked');
+    contextMenu.style.display = 'none';
     });
-  });
+
+document.getElementById('deleteRow').addEventListener('click', function()
+    {
+    // Implement delete row functionality
+    document.getSelection()
+    var row = getRowUnderCursor(e);
+    row.remove();
+    //alert('Delete row clicked');
+    contextMenu.style.display = 'none';
+    });
+
+// Close context menu on outside click
+document.addEventListener('click', function() 
+    {
+    contextMenu.style.display = 'none';
+    });
+}
+
+function getRowUnderCursor(e) 
+{
+// Find the closest TR element to the click coordinates
+const table = document.getElementById('table').querySelector('table');
+const rows = table.rows;
+for (let i = 0; i < rows.length; i++) 
+    {
+    const rect = rows[i].getBoundingClientRect();
+    if (e.pageX >= rect.left && e.pageX <= rect.right && e.pageY >= rect.top && e.pageY <= rect.bottom)
+        {
+        return rows[i];
+        }
+    }
+return null;
+}
+
+function getRowNo(tableID, row)
+{
+const table = document.getElementById(tableID).querySelector('table');
+for (let i = 0; i < table.rows.length; i++)
+    {
+    if(row == table.rows[i])
+        return i;
+    }
+return -1;
+}
+
+function isFirstOrLastRow(row) 
+{
+const table = document.getElementById('table').querySelector('table');
+return row === table.rows[0] || row === table.rows[table.rows.length - 1];
+}
