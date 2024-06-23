@@ -426,8 +426,9 @@ if (year % 4 == 0)
 document.getElementById("Header").textContent = mnams[curmon];
 
 // loading in the tables
-var wiptable = LoadTable('Wips'.concat(year));
-var wiprecord = LoadTable('WipRecord'.concat(year));
+var wiptable = LoadTableFromFileN('data.json');
+
+wiprecord = new Array(365);
 
 for(;wiprecord.length < wiptable.length;)
     {
@@ -487,15 +488,6 @@ for (let i = 0; i < projlocs.length; i++)
         }
     }
 
-/* for (let i = 0; i < projlocs.length; i++)
-    {
-    for (let j = monstindx; j < endtindx; j++)
-        {
-        console.log(wiprecord[i][j]);
-        }
-    } */
-
-
 var itab = wiprecord;
 
 // copying the data for the month into a separate variable
@@ -523,7 +515,7 @@ for (let i = 0; i < projlocs.length; i++)
 
 console.table(itab);
 
-CreateHTMLTable(itab, projlocs.length+1, daysinmo[curmon] + 1);
+CreateTableN(itab, projlocs.length+1, daysinmo[curmon] + 1);
 
 var table = document.getElementById("table");
 table.setAttribute('class', "tracker");
