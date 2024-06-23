@@ -38,6 +38,18 @@ for (let index = 0; index < numcol; index++) {
     }
 }
 
+function AddRowN(table)
+{
+var cells = [];
+var nrow = table.insertRow(table.rows.length - 1);
+var numcol = table.rows[0].cells.length;
+
+for (let index = 0; index < numcol; index++) {
+    cells[index] = nrow.insertCell(index);
+    cells[index].contentEditable = true;
+    }
+}
+
 function ChangeYear(selyr) 
 {
 var wiplnk = document.querySelectorAll('.menubar a');
@@ -76,9 +88,12 @@ for (let i = 0; i < rows.length; i++)
 return data;
 }
 
-function StoreTableFromLocalN(table)
+function StoreTableFromLocalN(table, tabname = null)
 {
 const data = table;
+
+if(tabname === null)
+    tabname = 'data';
 
 const jsonString = JSON.stringify(data, null, 2);   // creates the string to store
 const blob = new Blob([jsonString], { type: 'application/json' });  // creates a blob to do the storage
@@ -86,7 +101,7 @@ const blob = new Blob([jsonString], { type: 'application/json' });  // creates a
 const url = 'http://localhost:8000/upload'; // Replace with your server endpoint
 
 const formData = new FormData();
-formData.append('file', blob, 'data.json');
+formData.append('file', blob, `${tabname}.json`);
 
 fetch(url, {
     method: 'POST',
@@ -108,9 +123,12 @@ fetch(url, {
 });
 }
 
-function StoreTableFromGlobalN(tableName)
+function StoreTableFromGlobalN(tableName, tabname = null)
 {
 const data = NormaliseTableFromHTMLN(tableName);
+
+if(tabname === null)
+    tabname = 'data';
 
 console.log(data);
 //.rows[row].cells[column].innerHTML
@@ -128,7 +146,7 @@ document.body.removeChild(a); */
 const url = 'http://localhost:8000/upload'; // Replace with your server endpoint
 
 const formData = new FormData();
-formData.append('file', blob, 'data.json');
+formData.append('file', blob, `${tabname}.json`);
 
 fetch(url, {
     method: 'POST',
@@ -173,6 +191,25 @@ data.forEach((rowData, rowIndex) =>
 const container = document.getElementById(containerID); // adds the table to the container
 container.innerHTML = '';
 container.appendChild(table);
+}
+
+async function LoadTableDataFromFileN(filePath)
+{
+try {
+    const response = await fetch(filePath);
+    if (!response.ok) {
+        throw new Error('Failed to fetch file');
+    }
+    const jsonData = await response.json();
+    if (Array.isArray(jsonData) && jsonData.every(row => Array.isArray(row))) {
+        console.log('Loaded JSON data:', jsonData);
+        return jsonData;
+    } else {
+        console.error('Invalid JSON format. Expected a 2D array.');
+    }
+} catch (error) {
+    console.error('Error loading JSON file:', error);
+}
 }
 
 async function LoadTableFromFileN(filePath)
@@ -405,10 +442,13 @@ table.appendChild(row);
 console.log("Final");
 }
 
-function InitialiseMonthView()
+async function InitialiseMonthView()
 {
 var daysinmo = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
 const mnams = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
+
+var records = await LoadTableDataFromFileN("uploads/wiprecord.json");
+var wips = await LoadTableDataFromFileN("uploads/data.json");   // gets the wips
 
 SetCurrentYear();
 console.log("InitialiseMonthView");
@@ -424,9 +464,9 @@ if (year % 4 == 0)
     }
 
 document.getElementById("Header").textContent = mnams[curmon];
+var table = document.getElementById('table').querySelector('table');  // gets the table
 
-const table = document.getElementById('table').querySelector('table');  // gets the table
-const wips = [];  // write a function to get the wips
+console.log("Wips: ", wips);
 var nwips = wips.length; // number of wips
 
 // add all of the days
@@ -440,7 +480,15 @@ for (let i = 1; i < daysinmo[curmon] + 1; i++)
 // get all of the projects added to the table
 for (let i = 0; i < nwips; i++)
     {
-    
+    console.log("h");
+    const nrow = table.insertRow(-1);
+    const cell1 = nrow.insertCell(0);
+    cell1.setAttribute("colspan", 2)
+
+    for (let i = 0; i < daysinmo[curmon]; i++) 
+        {
+        const cell2 = nrow.insertCell(-1);
+        }
     }
 
 // loading in the tables

@@ -13,7 +13,7 @@ const storage = multer.diskStorage({
         cb(null, 'uploads/'); // Directory where uploaded files will be stored
     },
     filename: function (req, file, cb) {
-        cb(null, 'data.json'); // Custom filename
+        cb(null, file.originalname); // Custom filename
     }
 });
 
