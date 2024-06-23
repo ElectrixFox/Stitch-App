@@ -5,7 +5,6 @@
     <script src="app.js"></script>
 </head>
 <body onload="InitialiseMonthView()">
-    <div class="key">Key</div>
     <button onclick="ClearWipRecord()">Clear</button>
     <button onclick="SaveHTMLTable('WipRecord', [1, 1])">Save</button>
 
@@ -19,7 +18,13 @@
             <li><a href="#">Quick Links</a> </li>
         </ul>
     </nav>
-
+    <div id="table">
+        <table class="montrack">
+            <tr>
+                <th colspan="2">Project</th>
+            </tr>
+        </table>
+    </div>
     </body>
 
 </html>

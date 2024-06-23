@@ -214,3 +214,22 @@ cursor: pointer;
 .context-menu ul li:hover {
 background-color: #f0f0f0;
 }
+
+.montrack {
+    padding: 10px;
+    border-spacing: 0;
+    width: 100%;
+    table-layout: fixed;
+
+}
+
+
+.montrack tr {
+    width: 100%;
+}
+
+.montrack th, td {
+    text-align: left;
+    padding: 15px;
+    border: 1px dashed grey;
+}

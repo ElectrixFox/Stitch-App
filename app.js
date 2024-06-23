@@ -425,8 +425,26 @@ if (year % 4 == 0)
 
 document.getElementById("Header").textContent = mnams[curmon];
 
+const table = document.getElementById('table').querySelector('table');  // gets the table
+const wips = [];  // write a function to get the wips
+var nwips = wips.length; // number of wips
+
+// add all of the days
+for (let i = 1; i < daysinmo[curmon] + 1; i++) 
+    {
+    var numcell = document.createElement('td');
+    numcell.textContent = i.toString();
+    table.rows[0].appendChild(numcell);
+    }
+
+// get all of the projects added to the table
+for (let i = 0; i < nwips; i++)
+    {
+    
+    }
+
 // loading in the tables
-var wiptable = LoadTableFromFileN('data.json');
+/*var wiptable = LoadTableFromFileN('data.json');
 
 wiprecord = new Array(365);
 
@@ -529,7 +547,7 @@ for (let i = 0; i < table.rows[0].cells.length; i++)
 for (let i = 0; i < table.rows.length; i++)
     {
     table.rows[i].cells[0].contentEditable = false;
-    }
+    }*/
 }
 
 function SaveNewWipTable()
