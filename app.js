@@ -1,9 +1,3 @@
-
-function GetCellText(row, column) { return document.getElementById("table").rows[row].cells[column].innerHTML; }
-function GetCellText(row, column, table) { return table.rows[row].cells[column].innerHTML; }
-function SetCellText(row, column, content) { document.getElementById("table").rows[row].cells[column].innerHTML = content; }
-function SetCellText(row, column, table, content) { table.rows[row].cells[column].innerHTML = content; }
-
 function InsertTableRow(table, index, length = 0)
 {
 var cells = [];
@@ -19,199 +13,12 @@ for (let index = 0; index < length; index++)
     }
 }
 
-function WriteKey(key, data) { localStorage.setItem(key, data); }
-function ReadKeyItem(key) { return localStorage.getItem(key); }
-
-function WriteJSONKey(key, data) { localStorage.setItem(key, data); }
-function ReadJSONKeyItem(key) { return localStorage.getItem(key); }
-
-// checks if a key exists
-function IsKey(key) { if (localStorage.getItem(key) == null) return 0; else return 1; }
-
-function Clear() { localStorage.clear(); }
-
-function CreateTable(tableid, cells, nrows = 0, ncols = 0)
-{
-if (nrows == 0)
-    {
-    nrows = cells.length;
-    }
-if (ncols == 0)
-    {
-    ncols = cells[0].length;
-    }
-
-WriteKey(tableid.concat("#ROWS"), nrows);
-WriteKey(tableid.concat("#COLS"), ncols);
-    
-for (let x = 0; x < nrows; x++)
-    {
-    for (let y = 0; y < ncols; y++)
-        {
-        // getting the ID of the cell
-        celid = tableid.concat(x.toString(), y.toString());
-        WriteKey(celid, cells[x][y]);
-        }
-    }
-}
-
-function LoadTable(tableid)
-{
-var nrows = ReadKeyItem(tableid.concat("#ROWS"));
-var ncols = ReadKeyItem(tableid.concat("#COLS"));
-
-var cells = new Array(nrows + 1);
-
-for (let x = 0; x < nrows; x++)
-    {
-    cells[x] = new Array(ncols + 1);
-    
-    for (let y = 0; y < ncols; y++)
-        {
-        // getting the ID of the cell
-        let celid = tableid.concat(x.toString(), y.toString());
-        cells[x][y] = ReadKeyItem(celid);
-        }
-    }
-
-return cells;
-}
-
-function NormaliseTable(table, nrows = 0, ncols = 0)
-{
-var cells = new Array(nrows);
-
-
-console.log(nrows, ncols);
-
-if(nrows == 0)
-    {
-    nrows = table.rows.length;
-    }
-if(ncols == 0)
-    {
-    ncols = table.rows[0].cells.length;
-    }
-
-console.log(nrows, ncols);
-
-for (let i = 0; i < nrows; i++)
-    {
-    // creates new array for each row
-    cells[i] = new Array(ncols + 1);
-
-    console.log(table.rows[i]);
-
-    for (let j = 0; j < ncols; j++)
-        {
-        console.log(i, j);
-        cells[i][j] = GetCellText(i, j, table);
-        }
-    }
-
-return cells;
-}
-
-function LoadTableFromFile(tableid)
-{
-var ncol = ReadKeyItem(tableid.concat("#COLS"));
-var nrow = ReadKeyItem(tableid.concat("#ROWS"));
-
-var cells = new Array();
-var celid = "";
-
-for (let i = 0; i < nrow; i++)
-    {
-    // creates new array for each row
-    cells[i] = new Array(ncol);
-
-    for (let j = 0; j < ncol; j++)
-        {
-        // getting the ID of the cell
-        celid = tableid.concat(i.toString(), j.toString());
-        cells[i][j] = ReadKeyItem(celid);
-        }
-    }
-
-return cells;
-}
-
-function WriteTableToFile(tableid, nrows, ncols, cells)
-{
-WriteKey(tableid.concat("#COLS"), ncols);
-WriteKey(tableid.concat("#ROWS"), nrows);
-
-for (let i = 0; i < nrows; i++)
-    {
-    for (let j = 0; j < ncols; j++)
-        {
-        // getting the ID of the cell
-        celid = tableid.concat(i.toString(), j.toString());
-        WriteKey(celid, cells[i][j]);
-        }
-    }
-}
-
-function WriteTableToJSONFile(tableid, nrows, ncols, cells)
-{
-WriteJSONKey(tableid.concat("#COLS"), ncols);
-WriteJSONKey(tableid.concat("#ROWS"), nrows);
-
-for (let i = 0; i < nrows; i++)
-    {
-    for (let j = 0; j < ncols; j++)
-        {
-        // getting the ID of the cell
-        celid = tableid.concat(i.toString(), j.toString());
-        WriteJSONKey(celid, cells[i][j]);
-        }
-    }
-}
-
-function LoadRowsSpecial(tableid, topleft)
-{
-var table = document.getElementById("table");
-console.log(tableid);
-cells = LoadTable(tableid);
-var ncol = cells[0].length - 1;
-var nrow = cells.length - 1;
-
-console.log(ncol, nrow);
-
-var cells = new Array();
-
-for (let i = 0; i < nrow; i++)
-    {
-    InsertTableRow(table, topleft[1], ncol);
-    }
-
-for (let i = 0; i < nrow; i++)
-    {
-    for (let j = 0; j < ncol; j++)
-        {
-        SetCellText(i + topleft[1], j + topleft[0], table, cells[i][j]);
-        }
-    }
-}
-
-function LoadRowsSpecialYr(tableid, topleft) { LoadRowsSpecial(tableid.concat(GetActiveYear()), topleft); }
-
-function SaveRows(tableid)
-{
-var table = document.getElementById("table");
-
-var nrow = table.rows.length - 1;
-var ncol = table.rows[0].cells.length;
-
-var cells = NormaliseTable(table);
-WriteTableToFile(tableid, nrow - 1, ncol, cells);
-
-}
+function Clear() { ; }
 
 function AddRow()
 {
 var cells = [];
-var table = document.getElementById("table");
+var table = document.getElementById("table").querySelector('table');
 var nrow = table.insertRow(table.rows.length - 1);
 var numcol = table.rows[0].cells.length;
 
@@ -219,6 +26,175 @@ for (let index = 0; index < numcol; index++) {
     cells[index] = nrow.insertCell(index);
     cells[index].contentEditable = true;
     }
+}
+
+function ChangeYear(selyr) 
+{
+var wiplnk = document.querySelectorAll('.menubar a');
+wiplnk.forEach(function(link) 
+    {
+    link.href = link.href.replace(/year=\d{4}/, "year=" + selyr);
+    });
+
+var monlnk = document.querySelectorAll('.monbar a');
+monlnk.forEach(function(link) 
+    {
+    link.href = link.href.replace(/year=\d{4}/, "year=" + selyr);
+    });
+}
+
+
+// new functions
+
+function NormaliseTableFromHTMLN(tableID)
+{
+const table = document.getElementById(tableID).querySelector('table');
+const rows = table.rows;
+const data = [];
+
+for (let i = 0; i < rows.length; i++) 
+    {
+    const row = rows[i];
+    const cells = row.cells;
+    const rowData = [];
+
+    for (let j = 0; j < cells.length; j++) 
+        {
+        rowData.push(cells[j].textContent);
+        }
+
+    data.push(rowData);
+    }
+
+return data;
+}
+
+function StoreTableFromLocalN(table)
+{
+const data = table;
+
+const jsonString = JSON.stringify(data, null, 2);   // creates the string to store
+const blob = new Blob([jsonString], { type: 'application/json' });  // creates a blob to do the storage
+
+const url = 'http://localhost:8000/upload'; // Replace with your server endpoint
+
+const formData = new FormData();
+formData.append('file', blob, 'data.json');
+
+fetch(url, {
+    method: 'POST',
+    body: formData
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error('Failed to upload file');
+    }
+    return response.json();
+})
+.then(data => {
+    console.log('File uploaded successfully:', data);
+    // Handle success response from server
+})
+.catch(error => {
+    console.error('Error uploading file:', error);
+    // Handle error
+});
+}
+
+function StoreTableFromGlobalN(tableName)
+{
+const data = NormaliseTableFromHTMLN(tableName);
+
+console.log(data);
+//.rows[row].cells[column].innerHTML
+
+const jsonString = JSON.stringify(data, null, 2);   // creates the string to store
+const blob = new Blob([jsonString], { type: 'application/json' });  // creates a blob to do the storage
+
+/* // Create an anchor element and trigger the download
+const a = document.createElement('a');
+a.href = URL.createObjectURL(blob);
+a.download = 'data.json';
+document.body.appendChild(a);
+a.click();
+document.body.removeChild(a); */
+const url = 'http://localhost:8000/upload'; // Replace with your server endpoint
+
+const formData = new FormData();
+formData.append('file', blob, 'data.json');
+
+fetch(url, {
+    method: 'POST',
+    body: formData
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error('Failed to upload file');
+    }
+    return response.json();
+})
+.then(data => {
+    console.log('File uploaded successfully:', data);
+    // Handle success response from server
+})
+.catch(error => {
+    console.error('Error uploading file:', error);
+    // Handle error
+});
+}
+
+function CreateTableN(data, containerID)
+{
+const table = document.createElement('table');  // creates the container
+table.setAttribute('class', "tracker");
+table.setAttribute("id", "table");
+
+data.forEach((rowData, rowIndex) => 
+    {
+    const row = document.createElement('tr');   // loops through all of the rows and creates those
+
+    rowData.forEach((cellData) => 
+        {
+        const cell = rowIndex === 0 ? document.createElement('th') : document.createElement('td');  // adds the appropriate elements
+        cell.textContent = cellData;    // sets the cell data
+        row.appendChild(cell);  // adds the cell
+        });
+
+    table.appendChild(row); // adds the rown
+    });
+
+const container = document.getElementById(containerID); // adds the table to the container
+container.innerHTML = '';
+container.appendChild(table);
+}
+
+async function LoadTableFromFileN(filePath)
+{
+try {
+    const response = await fetch(filePath);
+    if (!response.ok) {
+        throw new Error('Failed to fetch file');
+    }
+    const jsonData = await response.json();
+    if (Array.isArray(jsonData) && jsonData.every(row => Array.isArray(row))) {
+        console.log('Loaded JSON data:', jsonData);
+        CreateTableN(jsonData, 'table');
+    } else {
+        console.error('Invalid JSON format. Expected a 2D array.');
+    }
+} catch (error) {
+    console.error('Error loading JSON file:', error);
+}
+}
+
+function LoadTableToScreenN(data)
+{
+LoadTableFromFileN('uploads/data.json');
+}
+
+function InitialSetupN()
+{
+CreateTableN([["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], ["Greg", "Martin"]], 'table');
 }
 
 function FindProjectsInMonth(intable, month)
@@ -326,38 +302,6 @@ CreateTable("Wips2024", [['nil']]);
 CreateTable('WipRecord2024', ["*"]);
 }
 
-function CreateHTMLTable(celldata, nrows = 0, ncols = 0)
-{
-if (nrows == 0)
-    {
-    nrows = celldata.length;
-    }
-if (ncols == 0)
-    {
-    ncols = celldata[0].length;
-    }
-
-// create the table
-const table = document.createElement("table");
-
-for (let i = 0; i < nrows; i++)
-    {
-    var row = document.createElement("tr");
-    for (let j = 0; j < ncols; j++) 
-        {
-        let cell = row.insertCell(j);
-        cell.textContent = celldata[i][j];
-        cell.contentEditable = true;
-        }
-
-    table.appendChild(row);
-    }
-
-table.setAttribute('class', "tracker");
-table.setAttribute("id", "table");
-document.body.appendChild(table);
-}
-
 function GetQueryParameter(name) 
 {
 const urlParams = new URLSearchParams(window.location.search);
@@ -403,34 +347,36 @@ return curmon;
 
 function GetActiveYear() { return GetQueryParameter('year'); }
 
-function InitialiseWipsViewer()
+async function InitialiseWipsViewer()
 {
 SetCurrentYear();
-
 var yr = GetActiveYear();
 console.log(yr);
-var wiptable = LoadTable('Wips'.concat(yr));
-var nrws = 1
+LoadTableToScreenN('data.json');
+await new Promise(resolve => setTimeout(resolve, 100)); // waits for the table to be created
 
-console.log(wiptable);
-if(wiptable[0] != "nil")
-    nrws = wiptable.length + 1;
+// LoadTable('Wips'.concat(yr));
+var nrws = 1;
 
-console.log(wiptable.length);
-console.log(wiptable);
+// wiptable.unshift([ "Name", "Start Date", "Finish Date", "Designer", "Fabric", "Floss", "Notes" ]);
 
-wiptable.unshift([ "Name", "Start Date", "Finish Date", "Designer", "Fabric", "Floss", "Notes" ]);
+// CreateHTMLTable(wiptable, nrws, 7);
+
+const table = document.getElementById("table").querySelector("table");
+const rows = table.rows;
 
 
-CreateHTMLTable(wiptable, nrws, 7);
-
-var table = document.getElementById("table");
-table.setAttribute("class", "wips");
-table.setAttribute("id", "table");
-
-for (let i = 0; i < table.rows[0].cells.length; i++)
+for (let i = 0; i < rows[0].cells.length; i++)
     {
-    table.rows[0].cells[i].contentEditable = false;
+    rows[0].cells[i].contentEditable = false;
+    }
+
+for (let i = 1; i < rows.length; i++)
+    {
+    for (let j = 0; j < rows[i].cells.length; j++)
+        {
+        rows[i].cells[j].contentEditable = true;
+        }
     }
 
 var row = document.createElement("tr");
@@ -448,6 +394,8 @@ ted.appendChild(nrowbtndv);
 ted.setAttribute("colspan", table.rows[0].cells.length);
 row.appendChild(ted);
 table.appendChild(row);
+
+console.log("Final");
 }
 
 function InitialiseMonthView()
@@ -585,6 +533,14 @@ for (let i = 0; i < table.rows.length; i++)
     }
 }
 
+function SaveNewWipTable()
+{
+var data = NormaliseTableFromHTMLN('table');
+data = data.slice(0, -1);
+
+StoreTableFromLocalN(data);
+}
+
 function SaveWipRecordTable(cells, topleft)
 {
 var daysinmo = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
@@ -713,114 +669,32 @@ window.onload = function()
 SetCurrentYear();
 };
 
-function ChangeYear(selyr) 
-{
-var wiplnk = document.querySelectorAll('.menubar a');
-wiplnk.forEach(function(link) 
-    {
-    link.href = link.href.replace(/year=\d{4}/, "year=" + selyr);
-    });
+const target = document.getElementById('target');
+  const contextMenu = document.getElementById('contextMenu');
 
-var monlnk = document.querySelectorAll('.monbar a');
-monlnk.forEach(function(link) 
-    {
-    link.href = link.href.replace(/year=\d{4}/, "year=" + selyr);
-    });
-}
+  // Prevent default context menu and show custom context menu
+  target.addEventListener('contextmenu', function(event) {
+    event.preventDefault();
+    
+    // Position the context menu near the cursor
+    contextMenu.style.display = 'block';
+    contextMenu.style.left = event.pageX + 'px';
+    contextMenu.style.top = event.pageY + 'px';
+  });
 
-
-// new functions
-
-function NormaliseTableFromHTML(tableID)
-{
-const table = document.getElementById(tableID).querySelector('table');
-const rows = table.rows;
-const data = [];
-
-for (let i = 0; i < rows.length; i++) 
-    {
-    const row = rows[i];
-    const cells = row.cells;
-    const rowData = [];
-
-    for (let j = 0; j < cells.length; j++) 
-        {
-        rowData.push(cells[j].textContent);
-        }
-
-    data.push(rowData);
+  // Hide custom context menu on clicks outside of it
+  document.addEventListener('click', function(event) {
+    if (!contextMenu.contains(event.target)) {
+      contextMenu.style.display = 'none';
     }
+  });
 
-return data;
-}
-
-function StoreTableFromGlobal(tableName)
-{
-const data = NormaliseTableFromHTML(tableName);
-
-console.log(data);
-//.rows[row].cells[column].innerHTML
-
-const jsonString = JSON.stringify(data, null, 2);   // creates the string to store
-const blob = new Blob([jsonString], { type: 'application/json' });  // creates a blob to do the storage
-
-// Create an anchor element and trigger the download
-const a = document.createElement('a');
-a.href = URL.createObjectURL(blob);
-a.download = 'data.json';
-document.body.appendChild(a);
-a.click();
-document.body.removeChild(a);
-}
-
-function CreateTable(data, containerID)
-{
-const table = document.createElement('table');  // creates the container
-
-data.forEach((rowData, rowIndex) => 
-    {
-    const row = document.createElement('tr');   // loops through all of the rows and creates those
-
-    rowData.forEach((cellData) => 
-        {
-        const cell = rowIndex === 0 ? document.createElement('th') : document.createElement('td');  // adds the appropriate elements
-        cell.textContent = cellData;    // sets the cell data
-        row.appendChild(cell);  // adds the cell
-        });
-
-    table.appendChild(row); // adds the rown
+  // Handle custom menu item clicks (you can customize this further)
+  const menuItems = document.querySelectorAll('.context-menu-item');
+  menuItems.forEach(item => {
+    item.addEventListener('click', function() {
+      console.log('Clicked on:', item.textContent);
+      // Perform actions based on the clicked item
+      // For example: item.textContent might determine the action
     });
-
-const container = document.getElementById(containerID); // adds the table to the container
-container.innerHTML = '';
-container.appendChild(table);
-}
-
-async function LoadTableFromFile(filePath)
-{
-try {
-    const response = await fetch(filePath);
-    if (!response.ok) {
-        throw new Error('Failed to fetch file');
-    }
-    const jsonData = await response.json();
-    if (Array.isArray(jsonData) && jsonData.every(row => Array.isArray(row))) {
-        console.log('Loaded JSON data:', jsonData);
-        CreateTable(jsonData, 'table');
-    } else {
-        console.error('Invalid JSON format. Expected a 2D array.');
-    }
-} catch (error) {
-    console.error('Error loading JSON file:', error);
-}
-}
-
-function LoadTableToScreen(data)
-{
-LoadTableFromFile('data.json');
-}
-
-function InitialSetup()
-{
-CreateTable([["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], ["Greg", "Martin"]], 'table');
-}
+  });
