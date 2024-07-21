@@ -11,12 +11,7 @@ function toInt(str) { return parseInt(str, 10); }
 class StitchLog
     {
     constructor(logID, wipID, stDate, stStatus)
-        {
-        if(logID[0] === null)
-            {
-            // this = somefunctiontoloadstitchrecords();   // this will come from the JSON file
-            }
-        
+        {      
         this.logID = logID;
         this.wipID = wipID;
         this.stDate = stDate;
@@ -74,12 +69,12 @@ class StitchLog
     this.stStatus[itm2] = tmpstStatus;
     }
 
+    // this is just a simple bubble sort
+    // Improvement: change the sort to being an insertion or quick sort
     SortLogByDate()
     {
-    const len = this.recNo;
-
-    for (let i = 0; i < len; i++)
-        for (let j = 0; j < (len - i - 1); j++)
+    for (let i = 0; i < this.recNo; i++)
+        for (let j = 0; j < (this.recNo - i - 1); j++)
             if(DateComp(this.stDate[j], this.stDate[j + 1]) === 1)
                 this.SwapRecords(j, j + 1, 1);    
     }
@@ -160,6 +155,7 @@ let log = new StitchLog(
     ["02/01/2024", "10/01/2024", "09/01/2024", "04/01/2024", "05/01/2024", "01/01/2024", "10/01/2024", "08/01/2024", "06/01/2024", "06/01/2024"],
     ["N", "S", "FFO", "F", "N", "N", "S", "N", "F", "F"]
 );
+
 return log;
 }
 
@@ -237,8 +233,7 @@ for (let i = 1; i < 11; i++)
         console.log("\nEntry %d: %s", j + 1, stLog.stStatus[stLog.findRecord(recIDs[j])]);
         }
     
-    const dbfore = (toInt(tmpdat[1]) + 1).toString(10).padStart(2, "0")
+    const dbfore = (toInt(tmpdat[1]) + 1).toString(10).padStart(2, "0");
     tmpdat = ReplaceSection(tmpdat, 0, 1, dbfore);
-    //tmpdat = tmpdat.slice(-1, 1) + (toInt(tmpdat[1]) + 1).toString(10).padStart(2, "0") + tmpdat.slice(1 + 1);
     }
 }
