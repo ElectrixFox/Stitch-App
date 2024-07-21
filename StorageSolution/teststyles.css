@@ -37,6 +37,17 @@
     width: 10%;
 }
 
+.numcell {
+    border: 1px solid black;
+    color: rgba(136, 136, 136, 0.5);
+    text-align: left;
+    width: 10%;
+}
+
+.numcell:hover {
+    color: rgba(136, 136, 136, 1);
+}
+
 .blockcell {
     background-color: rgb(189, 242, 255);
     border: 2px yellow;
