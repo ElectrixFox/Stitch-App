@@ -1,0 +1,43 @@
+
+#wipDetails {
+    border-collapse: collapse;
+    width: 50%;
+}
+
+#wipDetails th {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+    background-color: #f2f2f2;
+    width: 20%;
+}
+
+#wipDetails td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+}
+
+#wipYearView {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+    border: 3px solid black;
+}
+
+#wipYearView th {
+    border: 1px solid black;
+    text-align: left;
+    width: 20%;
+}
+
+#wipYearView td {
+    border: 1px solid black;
+    text-align: left;
+    width: 10%;
+}
+
+.blockcell {
+    background-color: rgb(189, 242, 255);
+    border: 2px yellow;
+}

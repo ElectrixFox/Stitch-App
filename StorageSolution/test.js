@@ -1,33 +1,36 @@
 /* 
 Tables
 WIPS (wipID, startDate, finishDate, ...)
-STITCHLOG (stlogID, wipID, status, date, ...)
+STITCHLOG (strecID, wipID, status, date, ...)
 status: Stitched (S), Finished (F), F Finished (FFO), New Start (N)
+*/
+
+/*
+Bugs:
+- Ensure that only one new start and finish can exist per WIP
+- Ensure that WIP records cannot be made on the start date and end date
 */
 
 // converts a string to an integer
 function toInt(str) { return parseInt(str, 10); }
 
-class StitchLog
+class WipsTable
     {
-    constructor(logID, wipID, stDate, stStatus)
-        {      
-        this.logID = logID;
-        this.wipID = wipID;
-        this.stDate = stDate;
-        this.stStatus = stStatus;
-        
-        this.recNo = logID.length;
-        this.SortLogByDate();
-        }
-
-    findRecord(logID)
-    {
-    // loop through all of the records
-    for (let i = 0; i < this.logID.length; i++)
+    constructor(wipID, wipName, stDate, finDate)
         {
-        // if the record with the correct ID is found then exit the loop
-        if(this.logID[i] === logID)
+        this.wipID = wipID;
+        this.wipName = wipName;
+        this.stDate = stDate;
+        this.finDate = finDate;
+
+        this.nowips = wipID.length;
+        }
+    
+    findWip(wipID)
+    {
+    for (let i = 0; i < this.nowips; i++)   // loop through all of the wips
+        {
+        if(this.wipID[i] === wipID) // if the wip with the correct ID is found then exit the loop
             {
             return i;
             }
@@ -35,9 +38,80 @@ class StitchLog
     return -1;
     }
 
-    getRecordYear(logID)
+    findNextNumber()
     {
-    let loc = this.findRecord(logID);    // finds the record with the ID
+    let tmpno = this.nowips;
+    let find = this.findWip(tmpno);
+
+    while (find != -1)  // while the wips are being found
+        {
+        tmpno += 1; // increment tempno to the next number to test
+        find = this.findWip(tmpno);  // find the wip at the tmpno
+        }
+    
+    return tmpno;
+    }
+    
+    // -1 in wipID for a new wip entry
+    AddWip(wipID, wipName, stDate, finDate)
+    {
+    if(wipID === -1)    // if the wipID needs to be new
+        wipID = this.findNextNumber();
+
+    // adding the new details
+    this.wipID.push(wipID);
+    this.wipName.push(wipName);
+    this.stDate.push(stDate);
+    this.finDate.push(finDate);
+    
+    this.nowips += 1;
+    }
+
+    RemoveWip(wipID)
+    {
+    const loc = this.findWip(wipID);    // getting the location to remove at
+
+    // removing the entry
+    this.wipID.splice(loc, 1);
+    this.wipName.splice(loc, 1);
+    this.stDate.splice(loc, 1);
+    this.finDate.splice(loc, 1);
+
+    this.nowips -= 1;
+    }
+        
+    }
+
+class StitchLog
+    {
+    constructor(strecID, wipID, stDate, stStatus)
+        {      
+        this.strecID = strecID;
+        this.wipID = wipID;
+        this.stDate = stDate;
+        this.stStatus = stStatus;
+        
+        this.loglen = strecID.length;
+        this.SortLogByDate();
+        }
+
+    findRecord(recID)
+    {
+    // loop through all of the records
+    for (let i = 0; i < this.strecID.length; i++)
+        {
+        // if the record with the correct ID is found then exit the loop
+        if(this.strecID[i] === recID)
+            {
+            return i;
+            }
+        }
+    return -1;
+    }
+
+    getRecordYear(recID)
+    {
+    let loc = this.findRecord(recID);    // finds the record with the ID
     return this.stDate.substring(6, 10);    // gets the year bit from dd/mm/yyyy
     }
     
@@ -52,18 +126,18 @@ class StitchLog
         }
     
     // setting the temp variables
-    const tmplogID = this.logID[itm1];
+    const tmprecID = this.strecID[itm1];
     const tmpwipID = this.wipID[itm1];
     const tmpstDate = this.stDate[itm1];
     const tmpstStatus = this.stStatus[itm1];
 
     // doing the swapping
-    this.logID[itm1] = this.logID[itm2];
+    this.strecID[itm1] = this.strecID[itm2];
     this.wipID[itm1] = this.wipID[itm2];
     this.stDate[itm1] = this.stDate[itm2];
     this.stStatus[itm1] = this.stStatus[itm2];
 
-    this.logID[itm2] = tmplogID;
+    this.strecID[itm2] = tmprecID;
     this.wipID[itm2] = tmpwipID;
     this.stDate[itm2] = tmpstDate;
     this.stStatus[itm2] = tmpstStatus;
@@ -73,19 +147,18 @@ class StitchLog
     // Improvement: change the sort to being an insertion or quick sort
     SortLogByDate()
     {
-    for (let i = 0; i < this.recNo; i++)
-        for (let j = 0; j < (this.recNo - i - 1); j++)
+    for (let i = 0; i < this.loglen; i++)
+        for (let j = 0; j < (this.loglen - i - 1); j++)
             if(DateComp(this.stDate[j], this.stDate[j + 1]) === 1)
                 this.SwapRecords(j, j + 1, 1);    
     }
 
     findNextNumber()
     {
-    let tmpno = this.recNo();
+    let tmpno = this.loglen();
     let find = this.findRecord(tmpno);
 
-    // while the records are being found
-    while (find != -1);
+    while (find != -1)  // while the records are being found
         {
         tmpno += 1; // increment tempno to the next number to test
         find = this.findRecord(tmpno);  // find the record at the tmpno
@@ -94,36 +167,34 @@ class StitchLog
     return tmpno;
     }
 
-    // -1 in logID for a new log entry
-    AddRecord(logID, wipID, stDate, stStatus)
+    // -1 in recID for a new log entry
+    AddRecord(recID, wipID, stDate, stStatus)
     {
-    // if the logID needs to be new
-    if(logID === -1)
-        logID = this.findNextNumber();
+    if(recID === -1)    // if the recID needs to be new
+        recID = this.findNextNumber();
 
     // adding the new details
-    this.logID.push(logID);
+    this.strecID.push(recID);
     this.wipID.push(wipID);
     this.stDate.push(stDate);
     this.stStatus.push(stStatus);
     
-    this.recNo = logID.length + 1;
+    this.loglen += 1;
 
     this.SortLogByDate();
     }
 
-    RemoveRecord(logID)
+    RemoveRecord(recID)
     {
-    // getting the location to remove at
-    const loc = this.findRecord(logID);
+    const loc = this.findRecord(recID); // getting the location to remove at
 
-    // adding the new details
-    this.logID.splice(loc, 1);
+    // removing the entry
+    this.strecID.splice(loc, 1);
     this.wipID.splice(loc, 1);
     this.stDate.splice(loc, 1);
     this.stStatus.splice(loc, 1);
 
-    this.recNo = logID.length - 1;
+    this.loglen -= 1;
     }
 
     // returns IDs of records made on a date
@@ -135,11 +206,11 @@ class StitchLog
     // Improvement: could probably turn this into a binary search to the first occurance of the date
     // Improvement: possible improvement, stop adding when the date changes after adding has started
 
-    for (let i = 0; i < this.recNo; i++)    // loop through all records
+    for (let i = 0; i < this.loglen; i++)    // loop through all records
         {
         if (DateComp(this.stDate[i], date) === 0)   // if the record is on the same date as the input date
             {
-            IDs.push(this.logID[i]);    // add the ID of the record to the ID array
+            IDs.push(this.strecID[i]);    // add the ID of the record to the ID array
             }
         }
     
@@ -157,6 +228,18 @@ let log = new StitchLog(
 );
 
 return log;
+}
+
+function LoadWipTable()
+{
+let wips = new WipsTable(
+    [1, 2, 3, 4, 5],
+    ["A", "B", "C", "D", "E"],
+    ["01/01/2024", "05/01/2024", "06/04/2024", "05/03/2024", "11/11/2024"],
+    ["15/02/2024", "09/03/2024", "19/08/2024", "21/04/2024", "24/12/2024"]
+);
+
+return wips;
 }
 
 // -1 is dat1 before dat2, 1 is dat1 after dat2, 0 is when they are the same, -2 is error 
@@ -187,13 +270,13 @@ function getDateYear(dat) { return toInt(dat.substring(6, 10)); }
 function createTable()
 {
 const stTable = new StitchLog();    // creating the record log
-const recNo = stTable.recNo();
+const loglen = stTable.loglen();
 let table = [];
 let daysinmo = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];    // number of days in each month
 
 const mindat = stTable.stDate[0];  // minimum date for the log table
 const mindatyr = getDateYear(mindat);   // gets the year of the minimum date
-const maxdat = stTable.stDate[recNo - 1];  // maximum date for the log table
+const maxdat = stTable.stDate[loglen - 1];  // maximum date for the log table
 const nyrs = getDateYear(maxdat) - mindatyr;   // gets number of years between the two dates
 
 // could be an idea to rework the creation to populate the array as it is being created with the appropriate records
@@ -236,4 +319,79 @@ for (let i = 1; i < 11; i++)
     const dbfore = (toInt(tmpdat[1]) + 1).toString(10).padStart(2, "0");
     tmpdat = ReplaceSection(tmpdat, 0, 1, dbfore);
     }
+}
+
+function CreateHTMLWipTable()
+{
+let wiptable = LoadWipTable();
+
+console.log(wiptable.wipName);
+}
+
+function AddRow(table, title, ncells = 0)
+{
+let newrow = table.insertRow();
+const cutthreshold = 15;    // cutoff threshold for creating cells on the same row
+let span = 1;
+let i = 1;
+
+const headCell = document.createElement('th');  // create the header cell
+
+if(title !== '')    // if there is a title
+    {
+    headCell.textContent = title;   // add the title
+    newrow.appendChild(headCell);   // append the cell to the new row
+    }
+else if(title !== '')   // if the title is empty
+    {
+    i += 1;
+    }
+
+for (i = 0; i < ncells; i++)    // loop through and add ncells number of cells
+    {
+    if(i === cutthreshold)
+        {
+        span = AddRow(table, '', ncells - cutthreshold) + 1;    // this sets the span to be the number of rows already added plus the new row to be added
+        break;
+        }
+    newrow.insertCell();
+    }
+
+if (ncells < cutthreshold)
+    {
+    const blockCell = document.createElement('td');  // create the block cell
+    blockCell.colSpan = cutthreshold - ncells;   // setting it's row span to be the remaining cells in the row
+    blockCell.className = "blockcell";  // sets the class name for the cell
+    newrow.appendChild(blockCell);  // adds the new cell
+    }
+
+if(title !== '')    // if there is a title meaning it is the header cell
+    {
+    headCell.rowSpan = span;    // update the span
+    }
+
+return span;   // returns 1 so that the span can be updated
+}
+
+function InitialiseRows(year)
+{
+let wiptable = LoadWipTable();
+let daysinmo = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];    // number of days in each month
+const months = ["January", "Feburary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+let table = document.getElementById("wipYearView");
+
+if ((toInt(year) % 4) === 0)    // if it is a leap year
+    daysinmo[1] = 29;   // set Feb to have 29 days
+
+for (let mon = 0; mon < 12; mon++)  // loop through all months in the year
+    {
+    AddRow(table, months[mon], daysinmo[mon]);
+
+    /* for (let day = 0; day < daysinmo[i]; day++) // loop through all days in the month
+        {
+        somefunctoaddcell();
+
+        } */
+    }
+
 }
