@@ -328,36 +328,46 @@ let wiptable = LoadWipTable();
 console.log(wiptable.wipName);
 }
 
-function AddRow(table, title, ncells = 0)
+let counter = 0;
+function AddRow(table, title, ncells = 0, numbered = 0)
 {
 let newrow = table.insertRow();
+const headCell = document.createElement('th');  // create the header cell
 const cutthreshold = 15;    // cutoff threshold for creating cells on the same row
+let curplace = 1;
 let span = 1;
 let i = 1;
-
-const headCell = document.createElement('th');  // create the header cell
 
 if(title !== '')    // if there is a title
     {
     headCell.textContent = title;   // add the title
     newrow.appendChild(headCell);   // append the cell to the new row
+    i += 1; // increase the starting number to reduce the extra column
+    curplace = 0;
     }
-else if(title !== '')   // if the title is empty
+else    // if there isn't a title
     {
-    i += 1;
+    curplace = span * 15;
+    console.log(span);
     }
 
 for (i = 0; i < ncells; i++)    // loop through and add ncells number of cells
     {
-    if(i === cutthreshold)
+    if(i === cutthreshold)  // if the threshold to start a new row is reached
         {
-        span = AddRow(table, '', ncells - cutthreshold) + 1;    // this sets the span to be the number of rows already added plus the new row to be added
+        span = AddRow(table, '', ncells - cutthreshold, numbered) + 1;    // this sets the span to be the number of rows already added plus the new row to be added
         break;
         }
-    newrow.insertCell();
+
+    const tmpCell = document.createElement('td');   // create the new cell element
+    if(numbered === 1)  // if the cells should be numbered
+        {
+        tmpCell.textContent = i + 1;    // set the number
+        }
+    newrow.appendChild(tmpCell);    // add the cell to the row
     }
 
-if (ncells < cutthreshold)
+if(ncells < cutthreshold)
     {
     const blockCell = document.createElement('td');  // create the block cell
     blockCell.colSpan = cutthreshold - ncells;   // setting it's row span to be the remaining cells in the row
@@ -370,6 +380,7 @@ if(title !== '')    // if there is a title meaning it is the header cell
     headCell.rowSpan = span;    // update the span
     }
 
+console.log("\nSpan %d: %d", counter++, span);
 return span;   // returns 1 so that the span can be updated
 }
 
@@ -383,9 +394,9 @@ let table = document.getElementById("wipYearView");
 if ((toInt(year) % 4) === 0)    // if it is a leap year
     daysinmo[1] = 29;   // set Feb to have 29 days
 
-for (let mon = 0; mon < 12; mon++)  // loop through all months in the year
+for (let mon = 0; mon < 1; mon++)  // loop through all months in the year
     {
-    AddRow(table, months[mon], daysinmo[mon]);
+    AddRow(table, months[mon], daysinmo[mon], 1);
 
     /* for (let day = 0; day < daysinmo[i]; day++) // loop through all days in the month
         {
