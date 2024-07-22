@@ -16,14 +16,19 @@ function toInt(str) { return parseInt(str, 10); }
 
 class WipsTable
     {
-    constructor(wipID, wipName, stDate, finDate)
+    constructor(wipID, wipName, designer, stDate, finDate, stitchcount, fabric, floss, notes)
         {
         this.wipID = wipID;
         this.wipName = wipName;
+        this.designer = designer;
         this.stDate = stDate;
         this.finDate = finDate;
+        this.stitchcount = stitchcount;
+        this.fabric = fabric;
+        this.floss = floss;
+        this.notes = notes;
 
-        this.nowips = wipID.length;
+        this.nowips = this.wipID.length;
         }
     
     findWip(wipID)
@@ -53,7 +58,7 @@ class WipsTable
     }
     
     // -1 in wipID for a new wip entry
-    AddWip(wipID, wipName, stDate, finDate)
+    AddWip(wipID, wipName, designer, stDate, finDate, stitchcount, fabric, floss, notes)
     {
     if(wipID === -1)    // if the wipID needs to be new
         wipID = this.findNextNumber();
@@ -61,8 +66,13 @@ class WipsTable
     // adding the new details
     this.wipID.push(wipID);
     this.wipName.push(wipName);
+    this.designer.push(designer);
     this.stDate.push(stDate);
     this.finDate.push(finDate);
+    this.stitchcount.push(stitchcount);
+    this.fabric.push(fabric);
+    this.floss.push(floss);
+    this.notes.push(notes);
     
     this.nowips += 1;
     }
@@ -74,10 +84,39 @@ class WipsTable
     // removing the entry
     this.wipID.splice(loc, 1);
     this.wipName.splice(loc, 1);
+    this.designer.splice(loc, 1);
     this.stDate.splice(loc, 1);
     this.finDate.splice(loc, 1);
+    this.stitchcount.splice(loc, 1);
+    this.fabric.splice(loc, 1);
+    this.floss.splice(loc, 1);
+    this.notes.splice(loc, 1);
 
     this.nowips -= 1;
+    }
+
+    getAsJSON()
+    {
+    let items = []
+    
+    for(let i = 0; i < this.nowips; i++)    // loop through all of the entries
+        {
+        let item = { 
+            wipID:          this.wipID[i],
+            wipName:        this.wipName[i],       
+            designer:       this.designer[i],      
+            stDate:         this.stDate[i],
+            finDate:        this.finDate[i],
+            stitchcount:    this.stitchcount[i],      
+            fabric:         this.fabric[i],
+            floss:          this.floss[i],
+            notes:          this.notes[i]
+        };  // create a base record
+
+        items.push(item);   // add each record to the item list
+        }
+
+    return items;
     }
         
     }
@@ -274,6 +313,37 @@ for(let i = 0; i < jsonData.length; i++)    // loop through all of the entries
 return new StitchLog(strids, wipids, recdats, recstats);    // creating the stitch log
 }
 
+function setWipTableFromJSON(jsonData)
+{
+let new_wipID = []
+let new_wipName = []
+let new_designer = []
+let new_stDate = []
+let new_finDate = []
+let new_stitchcount = []
+let new_fabric = []
+let new_floss = []
+let new_notes = []
+
+for(let i = 0; i < jsonData.length; i++)    // loop through all of the entries
+    {
+    let item = jsonData[i]; // getting each json entry
+
+    // adding the new item
+    new_wipID.push(item['wipID']);
+    new_wipName.push(item['wipName']);
+    new_designer.push(item['designer']);
+    new_stDate.push(item['stDate']);
+    new_finDate.push(item['finDate']);
+    new_stitchcount.push(item['stitchcount']);
+    new_fabric.push(item['fabric']);
+    new_floss.push(item['floss']);
+    new_notes.push(item['notes']);
+    }
+
+return new WipsTable(new_wipID, new_wipName, new_designer, new_stDate, new_finDate, new_stitchcount, new_fabric, new_floss, new_notes);    // creating the wip table
+}
+
 function LoadStitchLog()
 {
 let log = new StitchLog(
@@ -291,8 +361,13 @@ function LoadWipTable()
 let wips = new WipsTable(
     [1, 2, 3, 4, 5],
     ["A", "B", "C", "D", "E"],
+    ["0", "0", "0", "0", "0"],
     ["01/01/2024", "05/01/2024", "06/04/2024", "05/03/2024", "11/11/2024"],
-    ["15/02/2024", "09/03/2024", "19/08/2024", "21/04/2024", "24/12/2024"]
+    ["15/02/2024", "09/03/2024", "19/08/2024", "21/04/2024", "24/12/2024"],
+    [60, 120, 150, 190, 100],
+    ["", "", "", "", ""],
+    ["", "", "", "", ""],
+    ["", "", "", "", ""]
 );
 
 return wips;
@@ -387,7 +462,32 @@ const months = ["January", "Feburary", "March", "April", "May", "June", "July", 
 let table = document.getElementById("wipYearView");
 let logcells = [];
 const wipid = 1;
+const wiploc = wipstable.findWip(wipid);
 let logrecords = stitchlog.findRecordsForWip(wipid);    // gets all of the log records for the given wip
+
+let createBlock = (intable, title, content) => {
+    intable.insertRow();
+    const headcell = document.createElement('th');  // creating the header cell
+    headcell.textContent = title;   // setting the text content
+
+    const bodcell = document.createElement('td');   // creating content cell
+    bodcell.textContent = content;  // setting the text content
+
+    intable.appendChild(headcell);
+    intable.appendChild(bodcell);
+};
+
+{
+let wiptab = document.getElementById("wipDetails");
+createBlock(wiptab, "Name", wipstable.wipName[wiploc]);
+createBlock(wiptab, "Designer", wipstable.designer[wiploc]);
+createBlock(wiptab, "Start Date", wipstable.stDate[wiploc]);
+createBlock(wiptab, "Finish Date", wipstable.finDate[wiploc]);
+createBlock(wiptab, "Stitch Count", wipstable.stitchcount[wiploc]);
+createBlock(wiptab, "Fabric", wipstable.fabric[wiploc]);
+createBlock(wiptab, "Floss", wipstable.floss[wiploc]);
+createBlock(wiptab, "Notes", wipstable.notes[wiploc]);
+}
 
 if ((toInt(year) % 4) === 0)    // if it is a leap year
     daysinmo[1] = 29;   // set Feb to have 29 days
@@ -547,6 +647,69 @@ const res = fetch(url)  // setting the result to be the fetched data
     let stLog = setStitchLogFromJSON(data);
     console.log(stLog);
     return stLog;
+})
+.catch(error => {   // catching an error
+    console.error('Error loading file:', error);
+});
+
+return res;
+}
+
+function SaveWipTableFile()
+{
+const wiptab = LoadWipTable().getAsJSON();
+console.log(wiptab);
+SaveJSONFile('wiptable', wiptab);
+}
+
+function LoadWipTableFile()
+{
+return setWipTableFromJSON(LoadJSONFile('wiptable'));
+}
+
+
+function SaveJSONFile(filename, data)
+{
+const blob = new Blob([JSON.stringify(data, null, 2)], { // creates json blob with the type of json 
+    type: "application/json",
+});
+
+const url = 'http://localhost:8000/write-file?name=' + filename + '.json'; // url to upload to
+
+const formdata = new FormData();    // creates the new form to attatch the data to
+formdata.append('file', blob, filename + '.json'); // adds the data to the form
+
+fetch(url, {
+    method: 'POST',
+    body: formdata
+})
+.then(response => { // sorting the responce
+    if (!response.ok)   // if the responce is bad
+        throw new Error("Failed to upload file");   // give error message 
+    return response.json(); // return the responce
+})
+.then(data => { // sorting the data
+    console.log('File uploaded successfully:', data);
+})
+.catch(error => {   // catching an error
+    console.error('Error uploading file:', error);
+});
+}
+
+function LoadJSONFile(filename)
+{
+const url = 'http://localhost:8000/read-file?name=' + filename + '.json'; // url to load from
+
+const res = fetch(url)  // setting the result to be the fetched data
+.then(response => { // sorting the responce
+    if (!response.ok)   // if the responce is bad
+        throw new Error("Failed to load file");   // give error message 
+    return response.json(); // return the responce
+})
+.then(data => { // sorting the data
+    console.log('File loaded successfully:', data);
+    console.log(data[0]);
+    return data;
 })
 .catch(error => {   // catching an error
     console.error('Error loading file:', error);
