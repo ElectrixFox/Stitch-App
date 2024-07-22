@@ -377,9 +377,9 @@ function ReplaceSection(str, start, end, item)
 return str.slice(start - 1, end) + item + str.slice(end + 1);
 }
 
-function CreateHTMLStitchTable(year)
+async function CreateHTMLStitchTable(year)
 {
-let stitchlog = LoadStitchLog();
+let stitchlog = await LoadRecordLog();
 let wipstable = LoadWipTable();
 
 let daysinmo = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];    // number of days in each month
@@ -419,7 +419,6 @@ for (let i = 0; i < logrecords.length; i++)
     curcell.contentEditable = false;    // stops the cell being changeable
     curcell.className = null;   // clears the class
     }
-
 }
 
 function CreateHTMLWipTable()
@@ -536,7 +535,7 @@ function LoadRecordLog()
 {
 const url = 'http://localhost:8000/read-file?name=' + 'log.json'; // url to load from
 
-fetch(url)
+const res = fetch(url)  // setting the result to be the fetched data
 .then(response => { // sorting the responce
     if (!response.ok)   // if the responce is bad
         throw new Error("Failed to load file");   // give error message 
@@ -544,15 +543,14 @@ fetch(url)
 })
 .then(data => { // sorting the data
     console.log('File loaded successfully:', data);
-
-    const { a1, a2, a3, a4 } = data;
-
     console.log(data[0]);
     let stLog = setStitchLogFromJSON(data);
+    console.log(stLog);
     return stLog;
 })
 .catch(error => {   // catching an error
     console.error('Error loading file:', error);
 });
 
+return res;
 }
