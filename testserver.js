@@ -171,26 +171,15 @@ server.listen(port, hostname);  // gets the server to listen for an attempt to a
 
 const app = express();
 
-app.get ('/', (req, res) => {
-    const homefile = '/ntest.html';
-    const q = url.parse(req.url, true); // parses the url to be readable
+app.use(express.static('public')); // the location of all the static files
+app.set('view engine', 'ejs');  // setting the viewing engine as ejs
 
-    if(q.pathname === "/")  // if there is no destination
-        q.pathname = homefile;    // set the default file as the destination
+/* app.get('/', (req, res) => {   // getting a callback from going to '/'
+    console.log("Welcome to home");
+    res.render("ntest");
+}); */
 
-    const filename = "." + q.pathname;  // gets the desired file to open
-
-
-
-    /* fs.readFile(filename, (err, data) => {  // reads the file passing error (err) and the file (data) to the responce function
-        if(err) // if there is an error
-            {
-            return res.end("404 Not Found");    // writing the error and closing the responce
-            }
-        res.write(data);    // writes the html file to the screen
-        return res.end();
-    }); */
-});
-
+const mainRouter = require('./routes/mainroutes');  // importing the main routes
+app.use('/', mainRouter);   // use the router
 
 app.listen(port, hostname);
