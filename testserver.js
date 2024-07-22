@@ -59,14 +59,19 @@ const server = http.createServer((req, res) => {    // creates the server with r
 */
 
 const server = http.createServer((req, res) => {    // creates the server with request (req) and responce (res)
+    const homefile = '/ntest.html';
     const q = url.parse(req.url, true); // parses the url to be readable
+
+    if(q.pathname === "/")  // if there is no destination
+        q.pathname = homefile;    // set the default file as the destination
+
     const filename = "." + q.pathname;  // gets the desired file to open
 
     fs.readFile(filename, (err, data) => {  // reads the file passing error (err) and the file (data) to the responce function
-        if (err)
+        if(err) // if there is an error
             {
-            res.writeHead(404, { 'Content-Type': 'text/html' });
-            return res.end("404 Not Found");
+            res.writeHead(404, { 'Content-Type': 'text/html' });    // setting to be an error (404) and to write as text
+            return res.end("404 Not Found");    // writing the error and closing the responce
             }
         res.writeHead(200, { 'Content-Type': 'text/html' });    // reads the file as an html file
         res.write(data);    // writes the html file to the screen
