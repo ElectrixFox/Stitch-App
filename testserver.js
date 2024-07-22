@@ -1,98 +1,77 @@
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
-const url = require('url');
-const multer = require('multer');
-const cors = require('cors'); // Import the cors package
-
-const upload = multer({ dest: 'uploads/'});
+const http = require('http');   // requires the http package
+const url = require('url'); // requires the url package
+const fs = require('fs');   // requires the file server package
 
 const port = 8000;
 const hostname = 'localhost';
 
-// Define storage for multer
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/'); // Directory where uploaded files will be stored
-    },
-    filename: function (req, file, cb) {
-        cb(null, file.originalname); // Custom filename
-    }
+/* File management examples
+// this appends to a file or creates a new file if the file doesn't exist
+fs.appendFile('testfile.txt', 'Hello World!', (err) => {    // access 'testfile.txt' and write 'Hello World!' with the errors (err) passed into the responce
+    if (err) throw err;
+    console.log("Saved");
 });
 
-const server = http.createServer((req, res) => {
-    console.log(`Request for ${req.url} received.`);
+// similarly this opens the file 'testfile.txt' for writing which creates a new file if the file doesn't exist
+fs.open('testfile.txt', 'w', (err, file) => {   // accesses 'testfile.txt' to write ('w') passes the errors (err) and the file (file) to the responce function
+    if (err) throw err;
+    console.log("Saved");
+});
 
-    // CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*'); // Allow requests from any origin
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS'); // Allowed methods
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allowed headers
+// this replaces the given file and content if it exists if it doesn't exist then it will create the file with the given content
+fs.writeFile('testfile.txt', 'Hello World!', (err) => {
+    if (err) throw err;
+    console.log("Saved");
+});
 
-    if (req.method === 'OPTIONS') {
-        // Respond to preflight requests
-        res.writeHead(204);
-        res.end();
-        return;
-    }
+// this deletes a file
+fs.unlink('testfile.txt', (err) => {
+    if (err) throw err;
+    console.log("File deleted");
+});
 
-    let parsedUrl = url.parse(req.url, true);
-    let pathname = parsedUrl.pathname;
+// this renames a file
+fs.rename('testfile.txt', 'ntestfile.txt', (err) => {
+    if (err) throw err;
+    console.log("File renamed");
+});
+*/
 
-    if (req.method === 'POST' && pathname === '/upload') {
-        // Handle file upload request
-        upload.single('file')(req, res, (err) => {
-            if (err) {
-                console.error('Error uploading file:', err);
-                res.writeHead(500);
-                res.end('Error uploading file');
-                return;
+/* example 1
+const server = http.createServer((req, res) => {    // creates the server with request (req) and responce (res)
+    res.writeHead(200, { 'Content-Type': 'text/html' });    // sets the responce to be shown as html text
+    res.write("Hello World!");
+    const q = url.parse(req.url, true).query;   // this gets the part of the url which is the query
+    console.log(q.year);    // gets the part of the url containing the year e.g. http://localhost:8000/?year=2020 gives 2020
+    res.write(req.url); // writes the url from the request into the responce
+    res.end();  // finishes the responce
+});
+*/
+
+/* example 2
+const server = http.createServer((req, res) => {    // creates the server with request (req) and responce (res)
+    fs.readFile('ntest.html', (err, data) => {  // reads the file ntest.html passing error (err) and the file (data) to the responce function
+        res.writeHead(200, { 'Content-Type': 'text/html' });    // reads the file as an html file
+        res.write(data);    // writes the html file to the screen
+        return res.end();
+    });
+});
+*/
+
+const server = http.createServer((req, res) => {    // creates the server with request (req) and responce (res)
+    const q = url.parse(req.url, true); // parses the url to be readable
+    const filename = "." + q.pathname;  // gets the desired file to open
+
+    fs.readFile(filename, (err, data) => {  // reads the file passing error (err) and the file (data) to the responce function
+        if (err)
+            {
+            res.writeHead(404, { 'Content-Type': 'text/html' });
+            return res.end("404 Not Found");
             }
-            // File uploaded successfully
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ message: 'File uploaded successfully' }));
-        });
-    } else {
-        let filePath = `.${pathname}`;
-        const extname = path.extname(filePath);
-        let contentType = 'text/html';
-        switch (extname) {
-            case '.js':
-                contentType = 'text/javascript';
-                break;
-            case '.css':
-                contentType = 'text/css';
-                break;
-            case '.json':
-                contentType = 'application/json';
-                break;
-            case '.png':
-                contentType = 'image/png';
-                break;
-            case '.jpg':
-                contentType = 'image/jpg';
-                break;
-            case '.wav':
-                contentType = 'audio/wav';
-                break;
-        }
-
-        fs.readFile(filePath, (err, content) => {
-            if (err) {
-                if (err.code === 'ENOENT') {
-                    res.writeHead(404);
-                    res.end('404 Not Found');
-                } else {
-                    res.writeHead(500);
-                    res.end(`Server Error: ${err.code}`);
-                }
-            } else {
-                res.writeHead(200, { 'Content-Type': contentType });
-                res.end(content, 'utf-8');
-            }
-        });
-    }
+        res.writeHead(200, { 'Content-Type': 'text/html' });    // reads the file as an html file
+        res.write(data);    // writes the html file to the screen
+        return res.end();
+    });
 });
 
-server.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
-});
+server.listen(port, hostname);  // gets the server to listen for an attempt to access the server (localhost) on the given port

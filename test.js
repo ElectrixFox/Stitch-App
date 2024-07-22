@@ -463,32 +463,5 @@ for (let i = 1; i < 11; i++)
 
 function SaveRecordLog()
 {
-data = "abscehs";
 
-const jsonString = JSON.stringify(data, null, 2);   // creates the string to store
-const blob = new Blob([jsonString], { type: 'application/json' });  // creates a blob to do the storage
-
-const url = 'http://localhost:8000/upload'; // Replace with your server endpoint
-
-const formData = new FormData();
-formData.append('file', blob, 'recordLog.json');
-
-fetch(url, {
-    method: 'POST',
-    body: formData
-})
-.then(response => {
-    if (!response.ok) {
-        throw new Error('Failed to upload file');
-    }
-    return response.json();
-})
-.then(data => {
-    console.log('File uploaded successfully:', data);
-    // Handle success response from server
-})
-.catch(error => {
-    console.error('Error uploading file:', error);
-    // Handle error
-});
 }
