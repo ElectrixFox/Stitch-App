@@ -468,10 +468,11 @@ const blob = new Blob([JSON.stringify(object, null, 2)], { // creates json blob 
     type: "application/json",
 });
 
-const url = 'http://localhost:8000/upload'; // url to upload to
+const url = 'http://localhost:8000/write-file?name=' + 'log.json'; // url to upload to
 
 const formdata = new FormData();    // creates the new form to attatch the data to
-formdata.append('file', blob, 'data.json'); // adds the data to the form
+formdata.append('file', blob, 'log.json'); // adds the data to the form
+
 
 fetch(url, {
     method: 'POST',
