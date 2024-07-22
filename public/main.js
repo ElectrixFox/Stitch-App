@@ -85,13 +85,13 @@ class WipsTable
 class StitchLog
     {
     constructor(strecID, wipID, recDate, recStatus)
-        {      
+        {
         this.strecID = strecID;
         this.wipID = wipID;
         this.recDate = recDate;
         this.recStatus = recStatus;
         
-        this.loglen = strecID.length;
+        this.loglen = this.strecID.length;
         this.SortLogByDate();
         }
 
@@ -231,6 +231,47 @@ class StitchLog
     
     return IDs;
     }
+
+    getAsJSON()
+    {
+    let items = []
+    
+    for(let i = 0; i < this.loglen; i++)    // loop through all of the entries
+        {
+        let item = { 
+            strecID:    this.strecID[i],
+            wipID:      this.wipID[i],
+            recDate:    this.recDate[i],
+            recStatus:  this.recStatus[i]
+        };  // create a base record
+
+        items.push(item);   // add each record to the item list
+        }
+
+    return items;
+    }
+
+}
+
+function setStitchLogFromJSON(jsonData)
+{
+let strids = [];
+let wipids = [];
+let recdats = [];
+let recstats = [];
+
+for(let i = 0; i < jsonData.length; i++)    // loop through all of the entries
+    {
+    let item = jsonData[i]; // getting each json entry
+
+    // adding the new item
+    strids.push(item['strecID']);
+    wipids.push(item['wipID']);
+    recdats.push(item['recDate']);
+    recstats.push(item['recStatus']);
+    }
+
+return new StitchLog(strids, wipids, recdats, recstats);    // creating the stitch log
 }
 
 function LoadStitchLog()
@@ -463,8 +504,9 @@ for (let i = 1; i < 11; i++)
 
 function SaveRecordLog()
 {
-const object = { hello : "world" }; // the json data
-const blob = new Blob([JSON.stringify(object, null, 2)], { // creates json blob with the type of json 
+const stLog = LoadStitchLog().getAsJSON();
+
+const blob = new Blob([JSON.stringify(stLog, null, 2)], { // creates json blob with the type of json 
     type: "application/json",
 });
 
@@ -472,7 +514,6 @@ const url = 'http://localhost:8000/write-file?name=' + 'log.json'; // url to upl
 
 const formdata = new FormData();    // creates the new form to attatch the data to
 formdata.append('file', blob, 'log.json'); // adds the data to the form
-
 
 fetch(url, {
     method: 'POST',
@@ -504,12 +545,14 @@ fetch(url)
 .then(data => { // sorting the data
     console.log('File loaded successfully:', data);
 
-    const { p1, p2 } = data;
+    const { a1, a2, a3, a4 } = data;
 
-    console.log(p1);
-    console.log(p2);
+    console.log(data[0]);
+    let stLog = setStitchLogFromJSON(data);
+    return stLog;
 })
 .catch(error => {   // catching an error
     console.error('Error loading file:', error);
 });
+
 }
