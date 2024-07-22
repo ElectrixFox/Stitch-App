@@ -2,10 +2,10 @@
 <html>
 <head>
     <link rel="stylesheet" href="styles.css">
-    <title>Storage Testing</title>
+    <script src="main.js"> </script>
+    <title>Calendar View</title>
 </head>
 <body>
-    <script src="main.js"> </script>
     <button id="setupStitch" onclick="CreateHTMLStitchTable('2024')">Setup Stitch Table</button>
     <button id="setupWip" onclick="CreateHTMLWipTable()">Setup Wips</button>
     <button id="saveStitch" onclick="SaveRecordLog()">Save Stitch Table</button>
@@ -13,8 +13,7 @@
     <button id="saveWip" onclick="SaveWipTableFile()">Save Wip Table</button>
     <button id="loadWip" onclick="LoadWipTableFile()">Load Wip Table</button>
     <hr>
-    <table id="wipDetails">
-    </table>
+    <table class="wipDetails"></table>
 
     <!-- This will be useful when doing the alternate view
     <table>

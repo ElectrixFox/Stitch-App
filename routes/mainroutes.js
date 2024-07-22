@@ -5,4 +5,8 @@ router.get ('/ntest/man', (req, res) => {
     console.log("Welcome to home");
 });
 
+router.get ('/', (req, res) => {
+    console.log("Welcome to wipview");
+});
+
 module.exports = router;

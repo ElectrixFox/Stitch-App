@@ -455,40 +455,14 @@ return str.slice(start - 1, end) + item + str.slice(end + 1);
 async function CreateHTMLStitchTable(year)
 {
 let stitchlog = await LoadRecordLog();
-let wipstable = LoadWipTable();
-
 let daysinmo = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];    // number of days in each month
 const months = ["January", "Feburary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 let table = document.getElementById("wipYearView");
 let logcells = [];
 const wipid = 1;
-const wiploc = wipstable.findWip(wipid);
 let logrecords = stitchlog.findRecordsForWip(wipid);    // gets all of the log records for the given wip
 
-let createBlock = (intable, title, content) => {
-    const nrow = intable.insertRow();
-    const headcell = document.createElement('th');  // creating the header cell
-    headcell.textContent = title;   // setting the text content
-
-    const bodcell = document.createElement('td');   // creating content cell
-    bodcell.textContent = content;  // setting the text content
-
-    nrow.appendChild(headcell);
-    nrow.appendChild(bodcell);
-    intable.appendChild(nrow);
-};
-
-{
-let wiptab = document.getElementById("wipDetails");
-createBlock(wiptab, "Name", wipstable.wipName[wiploc]);
-createBlock(wiptab, "Designer", wipstable.designer[wiploc]);
-createBlock(wiptab, "Start Date", wipstable.stDate[wiploc]);
-createBlock(wiptab, "Finish Date", wipstable.finDate[wiploc]);
-createBlock(wiptab, "Stitch Count", wipstable.stitchcount[wiploc]);
-createBlock(wiptab, "Fabric", wipstable.fabric[wiploc]);
-createBlock(wiptab, "Floss", wipstable.floss[wiploc]);
-createBlock(wiptab, "Notes", wipstable.notes[wiploc]);
-}
+CreateHTMLWipTable(wipid);
 
 if ((toInt(year) % 4) === 0)    // if it is a leap year
     daysinmo[1] = 29;   // set Feb to have 29 days
@@ -522,11 +496,35 @@ for (let i = 0; i < logrecords.length; i++)
     }
 }
 
-function CreateHTMLWipTable()
+function CreateHTMLWipTable(wipid = 0)
 {
-let wiptable = LoadWipTable();
+let wipstable = LoadWipTable();
+const wiploc = wipstable.findWip(wipid);
 
-console.log(wiptable.wipName);
+let createBlock = (intable, title, content) => {
+    const nrow = intable.insertRow();
+    const headcell = document.createElement('th');  // creating the header cell
+    headcell.textContent = title;   // setting the text content
+
+    const bodcell = document.createElement('td');   // creating content cell
+    bodcell.textContent = content;  // setting the text content
+
+    nrow.appendChild(headcell);
+    nrow.appendChild(bodcell);
+    intable.appendChild(nrow);
+};
+
+{
+let wiptab = document.getElementsByClassName("wipDetails")[0];
+createBlock(wiptab, "Name", wipstable.wipName[wiploc]);
+createBlock(wiptab, "Designer", wipstable.designer[wiploc]);
+createBlock(wiptab, "Start Date", wipstable.stDate[wiploc]);
+createBlock(wiptab, "Finish Date", wipstable.finDate[wiploc]);
+createBlock(wiptab, "Stitch Count", wipstable.stitchcount[wiploc]);
+createBlock(wiptab, "Fabric", wipstable.fabric[wiploc]);
+createBlock(wiptab, "Floss", wipstable.floss[wiploc]);
+createBlock(wiptab, "Notes", wipstable.notes[wiploc]);
+}
 }
 
 function AddRow(table, title, ncells = 0, numbered = 0, curplace = -1)
@@ -668,7 +666,6 @@ function LoadWipTableFile()
 return setWipTableFromJSON(LoadJSONFile('wiptable'));
 }
 
-
 function SaveJSONFile(filename, data)
 {
 const blob = new Blob([JSON.stringify(data, null, 2)], { // creates json blob with the type of json 
@@ -718,3 +715,4 @@ const res = fetch(url)  // setting the result to be the fetched data
 
 return res;
 }
+

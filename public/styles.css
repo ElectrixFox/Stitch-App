@@ -1,10 +1,11 @@
 
-#wipDetails {
+.wipDetails {
     border-collapse: collapse;
     width: 50%;
+    margin-top: 100px;
 }
 
-#wipDetails th {
+.wipDetails th {
     border: 1px solid black;
     padding: 8px;
     text-align: left;
@@ -12,9 +13,10 @@
     width: 20%;
 }
 
-#wipDetails td {
+.wipDetails td {
     border: 1px solid black;
     padding: 8px;
+    width: 80%;
     text-align: left;
 }
 
@@ -56,7 +58,7 @@
 /* modify all this */
 
 /* from here */
-nav {
+.menubar {
     width: 100%;
     display: flex;
     justify-content: center;
@@ -97,3 +99,36 @@ a {
     text-align: center;
   }
 /* to here */
+
+.container_wiplist {
+    width: 100%;
+    overflow: hidden;
+}
+
+#a .wipDetails {
+    /* width: 50%;
+    float: left;
+    overflow: hidden; */
+    width: 300px;
+    float:left; /* add this */
+    border: 1px solid red;
+}
+
+#b .wiplist {
+    /* z-index: 1;
+    min-height: 100px;
+    width: 50%;
+    margin-top: 100px;
+    padding: 10px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: start; */
+    border: 1px solid green;
+    float: left; /* add this */
+}
+
+
+
+.wiplist {
+    
+}
