@@ -7,10 +7,6 @@ const hostname = 'localhost';
 
 const app = express();
 
-/* app.post('/save-text', upload.single('file'), (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', req.file.filename));
-}); */
-
 app.use(express.static('public')); // the location of all the static files
 app.set('view engine', 'ejs');  // setting the viewing engine as ejs
 

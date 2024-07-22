@@ -17,22 +17,16 @@ const storage = multer.diskStorage({
 const upload = multer({storage});    // sets storage details
 // app.use(bodyParser.json()); // to parse json bodies
 
-router.post('/write-file', upload.single('file'), (req, res) => {
-    const file = req.file;
+router.post('/write-file', upload.single('file'), (req, res) => {   // gets the write file
+    const file = req.file;  // assign the file to a variable
 
-    if (!file)
-        {
-        return res.status(400).send({ error: "File upload failed" });        
-        }
+    if (!file)  // if the file doesn't exist
+        return res.status(400).send({ error: "File upload failed" });   // give an error message
 
-    const q = url.parse(req.url, true); // parses the url
-    const filename = q.query['name'];   // gets the name query
-    const content = req.body; // gets the body of the request
+    const filename = url.parse(req.url, true).query['name']; // parses the url to get the name query parameter
     const filePath = __dirname + '..\\uploads' + filename;  // gets the new file path
     
-    res.json({ message: "File uploaded successfully", filePath });
-    
-    
+    res.json({ message: "File uploaded successfully", filePath });  // output a success message
 });
 
 router.get('/read-file/:filename', (req, res) => {
