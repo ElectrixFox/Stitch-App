@@ -174,10 +174,10 @@ const app = express();
 app.use(express.static('public')); // the location of all the static files
 app.set('view engine', 'ejs');  // setting the viewing engine as ejs
 
-/* app.get('/', (req, res) => {   // getting a callback from going to '/'
+app.get('/', (req, res) => {   // getting a callback from going to '/'
     console.log("Welcome to home");
-    res.render("ntest");
-}); */
+    res.redirect('ntest');
+});
 
 const mainRouter = require('./routes/mainroutes');  // importing the main routes
 app.use('/', mainRouter);   // use the router
