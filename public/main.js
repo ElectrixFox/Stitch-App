@@ -489,6 +489,27 @@ fetch(url, {
 .catch(error => {   // catching an error
     console.error('Error uploading file:', error);
 });
+}
 
+function LoadRecordLog()
+{
+const url = 'http://localhost:8000/read-file?name=' + 'log.json'; // url to load from
 
+fetch(url)
+.then(response => { // sorting the responce
+    if (!response.ok)   // if the responce is bad
+        throw new Error("Failed to load file");   // give error message 
+    return response.json(); // return the responce
+})
+.then(data => { // sorting the data
+    console.log('File loaded successfully:', data);
+
+    const { p1, p2 } = data;
+
+    console.log(p1);
+    console.log(p2);
+})
+.catch(error => {   // catching an error
+    console.error('Error loading file:', error);
+});
 }

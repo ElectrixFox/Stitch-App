@@ -15,7 +15,6 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({storage});    // sets storage details
-// app.use(bodyParser.json()); // to parse json bodies
 
 router.post('/write-file', upload.single('file'), (req, res) => {   // gets the write file
     const file = req.file;  // assign the file to a variable
@@ -24,21 +23,22 @@ router.post('/write-file', upload.single('file'), (req, res) => {   // gets the 
         return res.status(400).send({ error: "File upload failed" });   // give an error message
 
     const filename = url.parse(req.url, true).query['name']; // parses the url to get the name query parameter
-    const filePath = __dirname + '..\\uploads' + filename;  // gets the new file path
+    const filePath = path.join(__dirname, '..\\uploads', filename);  // gets the new file path
     
     res.json({ message: "File uploaded successfully", filePath });  // output a success message
 });
 
-router.get('/read-file/:filename', (req, res) => {
-    const { filename } = req.params;    // gets the file name
-    const filePath = path.join(__dirname, '../uploads', filename);  // gets the file path
-
+router.get('/read-file', (req, res) => {
+    const filename = url.parse(req.url, true).query['name']; // parses the url to get the name query parameter
+    const filePath = path.join(__dirname, '..\\uploads\\', filename);  // gets the new file path
+    console.log(filename, "\n", filePath);
     fs.readFile(filePath, 'utf8', (err, data) => {  // starts the reading of the file
         if (err)
             {
             return res.status(500).json({ error: "Failed to read file" }); // gives an error message
             }
-        res.json({ content: data });
+        
+        res.json(JSON.parse(data)); // parses the data in order to return it
     });
 });
 

@@ -1,6 +1,4 @@
 const express = require('express'); // requires the express package
-const bodyParser = require('body-parser');  // requires the body parser package
-const path = require('path');   // requires the path package
 
 const port = 8000;
 const hostname = 'localhost';
