@@ -3,6 +3,8 @@ const url = require('url'); // requires the url package
 const fs = require('fs');   // requires the file server package
 const events = require('events');   // requires the events package
 const formidable = require('formidable');   // requires the formidable package
+const express = require('express'); // requires the express package
+const multer = require('multer'); // requires the multer package
 
 const port = 8000;
 const hostname = 'localhost';
@@ -139,16 +141,27 @@ const server = http.createServer((req, res) => {    // creates the server with r
 
     const filename = "." + q.pathname;  // gets the desired file to open
 
-    fs.readFile(filename, (err, data) => {  // reads the file passing error (err) and the file (data) to the responce function
-        if(err) // if there is an error
-            {
-            res.writeHead(404, { 'Content-Type': 'text/html' });    // setting to be an error (404) and to write as text
-            return res.end("404 Not Found");    // writing the error and closing the responce
-            }
-        res.writeHead(200, { 'Content-Type': 'text/html' });    // reads the file as an html file
-        res.write(data);    // writes the html file to the screen
-        return res.end();
-    });
+    if(req.method === 'POST' && q.pathname === '/upload')    // if should upload
+        {
+        console.log("Posting");
+        fs.writeFile('', 'Hello World!', (err) => {
+            if (err) throw err;
+            console.log("Saved");
+        });        
+        }
+    else
+        {  
+        fs.readFile(filename, (err, data) => {  // reads the file passing error (err) and the file (data) to the responce function
+            if(err) // if there is an error
+                {
+                res.writeHead(404, { 'Content-Type': 'text/html' });    // setting to be an error (404) and to write as text
+                return res.end("404 Not Found");    // writing the error and closing the responce
+                }
+            res.writeHead(200, { 'Content-Type': 'text/html' });    // reads the file as an html file
+            res.write(data);    // writes the html file to the screen
+            return res.end();
+        });
+        }
 });
 
 server.listen(port, hostname);  // gets the server to listen for an attempt to access the server (localhost) on the given port

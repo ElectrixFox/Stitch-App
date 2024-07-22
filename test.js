@@ -463,5 +463,31 @@ for (let i = 1; i < 11; i++)
 
 function SaveRecordLog()
 {
+const object = { hello : "world" }; // the json data
+const blob = new Blob([JSON.stringify(object, null, 2)], { // creates json blob with the type of json 
+    type: "application/json",
+});
+
+const url = 'http://localhost:8000/upload'; // url to upload to
+
+const formdata = new FormData();    // creates the new form to attatch the data to
+formdata.append('file', blob, 'data.json'); // adds the data to the form
+
+fetch(url, {
+    method: 'POST',
+    body: formdata
+})
+.then(response => { // sorting the responce
+    if (!response.ok)   // if the responce is bad
+        throw new Error("Failed to upload file");   // give error message 
+    return response.json(); // return the responce
+})
+.then(data => { // sorting the data
+    console.log('File uploaded successfully:', data);
+})
+.catch(error => {   // catching an error
+    console.error('Error uploading file:', error);
+});
+
 
 }
