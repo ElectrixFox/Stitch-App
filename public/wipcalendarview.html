@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="styles.css">
+    <title>Storage Testing</title>
+</head>
+<body>
+    <script src="main.js"> </script>
+    <button id="setupStitch" onclick="CreateHTMLStitchTable('2024')">Setup Stitch Table</button>
+    <button id="setupWip" onclick="CreateHTMLWipTable()">Setup Wips</button>
+    <button id="saveStitch" onclick="SaveRecordLog()">Save Stitch Table</button>
+    <button id="loadStitch" onclick="LoadRecordLog()">Load Stitch Table</button>
+    <button id="saveWip" onclick="SaveWipTableFile()">Save Wip Table</button>
+    <button id="loadWip" onclick="LoadWipTableFile()">Load Wip Table</button>
+    <hr>
+    <table id="wipDetails">
+    </table>
+
+    <!-- This will be useful when doing the alternate view
+    <table>
+        <thead>
+            <tr>
+              <th scope="col">Items</th>
+              <th scope="col">Expenditure</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+                <td scope="row">
+
+                </td>
+            </tr>
+          </tbody>
+    </table>
+    -->
+    <hr>
+    
+    <button id="initRows" onclick="InitialiseStitchLogTable()">Init Rows</button>
+    <table id="wipYearView">
+        <caption>
+            Year view
+        </caption>
+
+    </table>
+</body>
+</html>

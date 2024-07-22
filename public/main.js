@@ -466,15 +466,16 @@ const wiploc = wipstable.findWip(wipid);
 let logrecords = stitchlog.findRecordsForWip(wipid);    // gets all of the log records for the given wip
 
 let createBlock = (intable, title, content) => {
-    intable.insertRow();
+    const nrow = intable.insertRow();
     const headcell = document.createElement('th');  // creating the header cell
     headcell.textContent = title;   // setting the text content
 
     const bodcell = document.createElement('td');   // creating content cell
     bodcell.textContent = content;  // setting the text content
 
-    intable.appendChild(headcell);
-    intable.appendChild(bodcell);
+    nrow.appendChild(headcell);
+    nrow.appendChild(bodcell);
+    intable.appendChild(nrow);
 };
 
 {
