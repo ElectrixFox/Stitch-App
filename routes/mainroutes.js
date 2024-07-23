@@ -10,7 +10,7 @@ router.get ('/index', (req, res) => {
 router.get ('/wipview', (req, res) => {
     console.log("\n\nWelcome to wipview");
     res.render('wipview');
-    // res.redirect('wipview.html');
+    //res.redirect('wipview.html');
 });
 
 router.get ('/wipview/:id', (req, res) => {
