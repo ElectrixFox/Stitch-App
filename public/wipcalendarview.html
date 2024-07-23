@@ -2,20 +2,47 @@
 <html>
 <head>
     <link rel="stylesheet" href="styles.css">
-    <script src="main.js"> </script>
+    <script src="main.js" type="module"> </script>
+    <script type="module">
+        import { CreateHTMLStitchTable, CreateHTMLWipTable, LoadStitchLogFile, LoadWipTableFile } from './main.js';
+
+        document.getElementById('setupStitch').onclick = () => {
+            CreateHTMLStitchTable('2024');
+        }
+
+        document.getElementById('setupWip').onclick = () => {
+            CreateHTMLWipTable();
+        }
+
+        document.getElementById('saveStitch').onclick = () => {
+            console.log("Saving Stitch");
+        }
+
+        document.getElementById('loadStitch').onclick = () => {
+            LoadStitchLogFile();
+        }
+
+        document.getElementById('saveWip').onclick = () => {
+            console.log("Saving Wip");
+        }
+
+        document.getElementById('loadWip').onclick = () => {
+            LoadWipTableFile();
+        }
+    </script>
     <title>Calendar View</title>
 </head>
 <body>
-    <button id="setupStitch" onclick="CreateHTMLStitchTable('2024')">Setup Stitch Table</button>
-    <button id="setupWip" onclick="CreateHTMLWipTable()">Setup Wips</button>
+    <button id="setupStitch">Setup Stitch Table</button>
+    <button id="setupWip">Setup Wips</button>
 
     <!-- <button id="saveStitch" onclick="SaveStitchLogFile()">Save Stitch Table</button> -->
     <button id="saveStitch">Save Stitch Table</button>
-    <button id="loadStitch" onclick="LoadStitchLogFile()">Load Stitch Table</button>
+    <button id="loadStitch">Load Stitch Table</button>
 
     <!-- <button id="saveWip" onclick="SaveWipTableFile()">Save Wip Table</button> -->
     <button id="saveWip">Save Wip Table</button>
-    <button id="loadWip" onclick="LoadWipTableFile()">Load Wip Table</button>
+    <button id="loadWip">Load Wip Table</button>
     <hr>
     <table class="wipDetails"></table>
 

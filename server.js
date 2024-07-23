@@ -10,7 +10,8 @@ app.set('view engine', 'ejs');  // setting the viewing engine as ejs
 
 app.get('/', (req, res) => {   // getting a callback from going to '/'
     console.log("Welcome to home");
-    res.redirect('index.html');
+    res.render('index');
+    //res.redirect('index.html');
 });
 
 const mainRouter = require('./routes/mainroutes');  // importing the main routes

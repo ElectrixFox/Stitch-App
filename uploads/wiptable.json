@@ -1,14 +1,14 @@
 [
   {
     "wipID": 1,
-    "wipName": "A",
-    "designer": "0",
+    "wipName": "Greggory Plankavick",
+    "designer": "Bary Marry",
     "stDate": "01/01/2024",
     "finDate": "15/02/2024",
-    "stitchcount": 60,
-    "fabric": "",
-    "floss": "",
-    "notes": ""
+    "stitchcount": "95",
+    "fabric": "None",
+    "floss": "None",
+    "notes": "None"
   },
   {
     "wipID": 2,
@@ -56,7 +56,7 @@
   },
   {
     "wipID": 6,
-    "wipName": "",
+    "wipName": "Marzipan",
     "designer": "",
     "stDate": "",
     "finDate": "",
@@ -67,7 +67,7 @@
   },
   {
     "wipID": 7,
-    "wipName": "",
+    "wipName": "Graceful summer",
     "designer": "",
     "stDate": "",
     "finDate": "",
@@ -78,18 +78,7 @@
   },
   {
     "wipID": 8,
-    "wipName": "",
-    "designer": "",
-    "stDate": "",
-    "finDate": "",
-    "stitchcount": "",
-    "fabric": "",
-    "floss": "",
-    "notes": ""
-  },
-  {
-    "wipID": 9,
-    "wipName": "",
+    "wipName": "Manzina",
     "designer": "",
     "stDate": "",
     "finDate": "",
