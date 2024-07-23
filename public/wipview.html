@@ -5,7 +5,7 @@
     <script src="main.js"> </script>
     <title>Wip View</title>
 </head>
-<body onload="CreateHTMLWipTable(1)">
+<body onload="CreateHTMLWipTable(1); CreateWipList();">
     <nav class="menubar">
         <ul class="nav">
             <li class="item"><a href="index.html">Home</a> </li>
@@ -17,16 +17,24 @@
     </nav>
 
     <div class="container_wiplist">
-        <table class="wipDetails" id="a"></table>
-        <nav class="wiplist" id="b">
-            <ul class="items">
-                <li class="item_wip">A</li>
-                <li class="item_wip">B</li>
-                <li class="item_wip">C</li>
-                <li class="item_wip">D</li>
-                <li class="item_wip">E</li>
+        <table class="wipDetails item-left"></table>
+        <div class="wiplist-dropdown item-right">
+            <button class="dropbtn">Wips</button>
+            <div class="wiplist-content" id="wiplist-content">
+
+                <button class="wiplist-newwip" id="wiplist-newwip" onclick="CreateNewWip()">New Wip</button>
+            </div>
+        </div>
+        <!--<nav class="wiplist item-right">
+            <ul class="wiplist">
+                <li class="wiplist">A</li>
+                <li class="wiplist">A</li>
+                <li class="wiplist">B</li>
+                <li class="wiplist">C</li>
+                <li class="wiplist">D</li>
+                <li class="wiplist">E</li>
             </ul>
-        </nav>
+        </nav>-->
         
         
     </div>

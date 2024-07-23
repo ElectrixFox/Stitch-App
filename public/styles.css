@@ -2,7 +2,6 @@
 .wipDetails {
     border-collapse: collapse;
     width: 50%;
-    margin-top: 100px;
 }
 
 .wipDetails th {
@@ -100,35 +99,66 @@ a {
   }
 /* to here */
 
+.wiplist ul {
+    background-color: #c9e2ff;
+}
+
+.wiplist li {
+    color: #ffae78;
+    text-shadow: 4px 4px 4px #ffc3c3;
+    display: block;
+    width: 60px;
+}
+
 .container_wiplist {
     width: 100%;
     overflow: hidden;
 }
 
-#a .wipDetails {
-    /* width: 50%;
-    float: left;
-    overflow: hidden; */
+.wipDetails {
     width: 300px;
-    float:left; /* add this */
     border: 1px solid red;
 }
 
-#b .wiplist {
-    /* z-index: 1;
-    min-height: 100px;
-    width: 50%;
-    margin-top: 100px;
-    padding: 10px;
-    display: flex;
-    justify-content: flex-end;
-    align-items: start; */
-    border: 1px solid green;
-    float: left; /* add this */
+.item-left {
+    float: left !important;
 }
 
-
-
-.wiplist {
-    
+.item-right {
+    float: right !important;
 }
+
+.wiplist-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background: #c9e2ff;
+    border: none;
+    border-radius: 2px;
+    color: #ffae78;
+    text-shadow: 4px 4px 4px #ffc3c3;
+}
+
+.wiplist-content {
+    display: none;
+    position: absolute;
+}
+
+.wiplist-newwip {
+    position: relative;
+    width: 100%;
+}
+
+.wiplist-content a {
+    position: relative;
+    width: 100%;
+    background-color: #c9e2ff;
+    text-decoration: none;
+    text-shadow: 4px 4px 4px #ffc3c3;
+    color: #ffae78;
+    text-align: center;
+  }
+
+.wiplist-dropdown:hover .wiplist-content { display: block; }

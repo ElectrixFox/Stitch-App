@@ -661,9 +661,10 @@ console.log(wiptab);
 SaveJSONFile('wiptable', wiptab);
 }
 
-function LoadWipTableFile()
+async function LoadWipTableFile()
 {
-return setWipTableFromJSON(LoadJSONFile('wiptable'));
+let data = await LoadJSONFile('wiptable'); 
+return setWipTableFromJSON(data);
 }
 
 function SaveJSONFile(filename, data)
@@ -716,3 +717,37 @@ const res = fetch(url)  // setting the result to be the fetched data
 return res;
 }
 
+async function CreateWipList()
+{
+let wiptable = await LoadWipTableFile();
+const wiplist = document.getElementById("wiplist-content");
+const btn = document.getElementById("wiplist-newwip");
+
+let newitem = (name) => {
+    const newref = document.createElement('a');
+
+    newref.href = name;
+    newref.textContent = name;
+    newref.className = "wiplist-content";
+
+    wiplist.insertBefore(newref, btn);
+};
+
+for (let i = 0; i < wiptable.nowips; i++)
+    {
+    newitem(wiptable.wipName[i]);
+    }
+
+
+}
+
+function CreateNewWip()
+{
+
+//     <a href="#">Link 1</a>
+const wiplist = document.getElementById("wiplist-newwip");
+const newref = document.createElement('a');
+
+newref.href = 'x';
+newref.textContent = 'x';
+}
