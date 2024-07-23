@@ -2,15 +2,27 @@
 <html>
 <head>
     <link rel="stylesheet" href="styles.css">
-    <script src="main.js"> </script>
+    <script src="main.js" type="module"> </script>
+    <script type="module">
+        import { CreateHTMLWipTable, CreateWipList, CreateNewWip } from './main.js';
+
+        window.onload = () => {
+            CreateHTMLWipTable(1);
+            CreateWipList();
+        }
+
+        document.getElementById('wiplist-newwip').onclick = () => {
+            CreateNewWip();
+        }
+    </script>
     <title>Wip View</title>
 </head>
-<body onload="CreateHTMLWipTable(1); CreateWipList();">
+<body onload="">
     <nav class="menubar">
         <ul class="nav">
-            <li class="item"><a href="index.html">Home</a> </li>
+            <li class="item"><a href="index">Home</a> </li>
             <li class="item"><a href="#">New Starts</a> </li>
-            <li class="item"><a href="wipview.html">WIPS</a> </li>
+            <li class="item"><a href="wipview">WIPS</a> </li>
             <li class="item"><a href="#">Finishes</a> </li>
             <li class="item"><a href="#">Quick Links</a> </li>
         </ul>
@@ -21,7 +33,7 @@
         <div class="wiplist-dropdown item-right">
             <button class="dropbtn">Wips</button>
             <div class="wiplist-content" id="wiplist-content">
-                <button class="wiplist-content" id="wiplist-newwip" onclick="CreateNewWip()">New Wip</button>
+                <button class="wiplist-content" id="wiplist-newwip" onclick="">New Wip</button>
             </div>
         </div>        
     </div>
