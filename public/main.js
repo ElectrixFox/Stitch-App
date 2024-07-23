@@ -57,7 +57,7 @@ class WipsTable
     return tmpno;
     }
     
-    // -1 in wipID for a new wip entry
+    // -1 in wipID for a new wip entry, also returns the new ID of the wip
     AddWip(wipID, wipName, designer, stDate, finDate, stitchcount, fabric, floss, notes)
     {
     if(wipID === -1)    // if the wipID needs to be new
@@ -75,6 +75,8 @@ class WipsTable
     this.notes.push(notes);
     
     this.nowips += 1;
+
+    return wipID;
     }
 
     RemoveWip(wipID)
@@ -654,9 +656,9 @@ const res = fetch(url)  // setting the result to be the fetched data
 return res;
 }
 
-function SaveWipTableFile()
+function SaveWipTableFile(wiptable)
 {
-const wiptab = LoadWipTable().getAsJSON();
+const wiptab = wiptable.getAsJSON();
 console.log(wiptab);
 SaveJSONFile('wiptable', wiptab);
 }
@@ -719,35 +721,84 @@ return res;
 
 async function CreateWipList()
 {
-let wiptable = await LoadWipTableFile();
-const wiplist = document.getElementById("wiplist-content");
-const btn = document.getElementById("wiplist-newwip");
+// <button class="wiplist-content" id="wiplist-newwip" onclick="CreateNewWip()">New Wip</button>
 
-let newitem = (name) => {
-    const newref = document.createElement('a');
+let wiptable = await LoadWipTableFile();    // loads the wip table in
+const wiplist = document.getElementById("wiplist-content"); // gets the wip list element
+const btn = document.getElementById("wiplist-newwip");  // gets the new wip button
 
-    newref.href = name;
-    newref.textContent = name;
-    newref.className = "wiplist-content";
+let newitem = (name) => {   // function to create a new list item
+    const newref = document.createElement('a'); // creates the new link
 
-    wiplist.insertBefore(newref, btn);
+    newref.href = name; // sets the link as the wip name
+    newref.textContent = name;  // sets the content as wip name
+    newref.className = "wiplist-content";   // sets the styling class
+    newref.id = 'wiplist-item';   // sets the ID of the entry
+
+    wiplist.insertBefore(newref, btn);  // inserts the new item before the button 
 };
 
-for (let i = 0; i < wiptable.nowips; i++)
+for (let i = 0; i < wiptable.nowips; i++)   // loop through all of the wips
     {
-    newitem(wiptable.wipName[i]);
+    newitem(wiptable.wipName[i]);   // adds each wip to the list
     }
-
 
 }
 
-function CreateNewWip()
+function RemoveHTMLElementChildren(eleID, eleIDstoignore = null)
 {
+const ele = document.getElementById(eleID); // gets the ID of the element to clear
+let toremove = [];  // elements to remove
+let cont = 1;
 
-//     <a href="#">Link 1</a>
-const wiplist = document.getElementById("wiplist-newwip");
-const newref = document.createElement('a');
+if(eleIDstoignore === null) // if there are no IDs to ignore
+    {
+    while (ele.childElementCount > removeat)  // while there are still child elements
+        {
+        const child = ele.childNodes[removeat];    // select the first child element 
+        ele.removeChild(child);    // remove the child
+        }
+    }
+else
+    {
+    for (let i = 0; i < ele.childNodes.length; i++) // loop through all child nodes
+        {
+        for (let j = 0; j < eleIDstoignore.length; j++)  // loop through all element IDs to ignore
+            {
+            if (ele.childNodes[i].id === eleIDstoignore[j])  // if there is a child node with an ID to ignore
+                {
+                cont = 0;   // don't continue with the removal
+                break;  // exit the search
+                }
+            }
+        if(cont === 1)  // if should continue with the removal
+            {
+            toremove.push(ele.childNodes[i]);   // add the child to the list
+            }
+        cont = 1;   // assume the next one isn't in the ignore list either
+        }
+    }
+}
 
-newref.href = 'x';
-newref.textContent = 'x';
+async function CreateNewWip()
+{
+const wiptable = await LoadWipTableFile();    // loads the wip table
+const container = document.getElementById("container_wiplist");    // loads the wip table
+
+RemoveHTMLElementChildren('wipdetstab');    // removes all the table columns for it to be rebuilt
+RemoveHTMLElementChildren('wiplist-content', 'wiplist-newwip');    // removes all the table columns for it to be rebuilt
+
+/* while (otab.childElementCount > 0)
+    {
+    const child = otab.childNodes[0];
+    console.log(child);
+    otab.removeChild(child);
+    } */
+
+const nID = wiptable.AddWip(-1, "", "", "", "", "", "", "", "");    // adds the new wip
+
+CreateHTMLWipTable(nID);   // recreates the table
+await CreateWipList();    // creates the new wip list
+
+SaveWipTableFile(wiptable); // saves the new wip table
 }
