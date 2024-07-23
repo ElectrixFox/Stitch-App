@@ -60,6 +60,10 @@ for (let i = 0; i < month; i++) // loops through months until month of given dat
 return res;
 }
 
+// WARNING: unused
+// replaces a section of the string (str) with item from start to end
+function ReplaceSection(str, start, end, item) { return str.slice(start - 1, end) + item + str.slice(end + 1); }
+
 //#endregion
 
 //#region HTML utilities
@@ -101,6 +105,59 @@ else
         ele.removeChild(toremove.pop());
         }
     }
+}
+
+function AddRow(table, title, ncells = 0, numbered = 0, curplace = -1)
+{
+let newrow = table.insertRow();
+const headCell = document.createElement('th');  // create the header cell
+const cutthreshold = 15;    // cutoff threshold for creating cells on the same row
+let span = 1;
+let i = 1;
+
+if(title !== '')    // if there is a title
+    {
+    headCell.textContent = title;   // add the title
+    newrow.appendChild(headCell);   // append the cell to the new row
+    i += 1; // increase the starting number to reduce the extra column
+    curplace = 0;
+    }
+else    // if there isn't a title
+    {
+    curplace += cutthreshold;
+    }
+
+for (i = 0; i < ncells; i++)    // loop through and add ncells number of cells
+    {
+    if(i === cutthreshold)  // if the threshold to start a new row is reached
+        {
+        span = AddRow(table, '', ncells - cutthreshold, numbered, curplace) + 1;    // this sets the span to be the number of rows already added plus the new row to be added
+        break;
+        }
+
+    const tmpCell = document.createElement('td');   // create the new cell element
+    if(numbered === 1)  // if the cells should be numbered
+        {
+        tmpCell.textContent = curplace + i + 1;    // set the number
+        tmpCell.className = "numcell";  // setting it to be a numbered cell class
+        }
+    newrow.appendChild(tmpCell);    // add the cell to the row
+    }
+
+if(ncells < cutthreshold)
+    {
+    const blockCell = document.createElement('td');  // create the block cell
+    blockCell.colSpan = cutthreshold - ncells;   // setting it's row span to be the remaining cells in the row
+    blockCell.className = "blockcell";  // sets the class name for the cell
+    newrow.appendChild(blockCell);  // adds the new cell
+    }
+
+if(title !== '')    // if there is a title meaning it is the header cell
+    {
+    headCell.rowSpan = span;    // update the span
+    }
+
+return span;   // returns 1 so that the span can be updated
 }
 
 //#endregion
@@ -382,8 +439,7 @@ class StitchLog
 
     return items;
     }
-
-}
+    }
 
 function setWipTableFromJSON(jsonData)
 {
@@ -513,43 +569,9 @@ let data = await LoadJSONFile('stitchlog');
 return setStitchLogFromJSON(data);
 }
 
-function createTable()
-{
-const stTable = new StitchLog();    // creating the record log
-const loglen = stTable.loglen();
-let table = [];
-let daysinmo = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];    // number of days in each month
-
-const mindat = stTable.recDate[0];  // minimum date for the log table
-const mindatyr = getDateYear(mindat);   // gets the year of the minimum date
-const maxdat = stTable.recDate[loglen - 1];  // maximum date for the log table
-const nyrs = getDateYear(maxdat) - mindatyr;   // gets number of years between the two dates
-
-// could be an idea to rework the creation to populate the array as it is being created with the appropriate records
-
-for (let yr = 0; yr <= nyrs; yr++)
-    {
-    const daysinyear = 365 + (((toInt(mindatyr) + yr) % 4) === 0);  // the number of days in the year (+1 if it is a leap year)
-    
-    // create new table for year
-    table = [];
-
-    // adds an entry for each day
-    for (let day = 0; day < daysinyear; day++)
-        {
-        table[day] = [];
-        }
-    }
-}
-
-function ReplaceSection(str, start, end, item)
-{
-return str.slice(start - 1, end) + item + str.slice(end + 1);
-}
-
 async function CreateHTMLStitchTable(year)
 {
-let stitchlog = await LoadRecordLog();
+let stitchlog = await LoadStitchLogFile();
 let daysinmo = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];    // number of days in each month
 const months = ["January", "Feburary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 let table = document.getElementById("wipYearView");
@@ -621,113 +643,6 @@ createBlock(wiptab, "Fabric", wipstable.fabric[wiploc]);
 createBlock(wiptab, "Floss", wipstable.floss[wiploc]);
 createBlock(wiptab, "Notes", wipstable.notes[wiploc]);
 }
-}
-
-function AddRow(table, title, ncells = 0, numbered = 0, curplace = -1)
-{
-let newrow = table.insertRow();
-const headCell = document.createElement('th');  // create the header cell
-const cutthreshold = 15;    // cutoff threshold for creating cells on the same row
-let span = 1;
-let i = 1;
-
-if(title !== '')    // if there is a title
-    {
-    headCell.textContent = title;   // add the title
-    newrow.appendChild(headCell);   // append the cell to the new row
-    i += 1; // increase the starting number to reduce the extra column
-    curplace = 0;
-    }
-else    // if there isn't a title
-    {
-    curplace += cutthreshold;
-    }
-
-for (i = 0; i < ncells; i++)    // loop through and add ncells number of cells
-    {
-    if(i === cutthreshold)  // if the threshold to start a new row is reached
-        {
-        span = AddRow(table, '', ncells - cutthreshold, numbered, curplace) + 1;    // this sets the span to be the number of rows already added plus the new row to be added
-        break;
-        }
-
-    const tmpCell = document.createElement('td');   // create the new cell element
-    if(numbered === 1)  // if the cells should be numbered
-        {
-        tmpCell.textContent = curplace + i + 1;    // set the number
-        tmpCell.className = "numcell";  // setting it to be a numbered cell class
-        }
-    newrow.appendChild(tmpCell);    // add the cell to the row
-    }
-
-if(ncells < cutthreshold)
-    {
-    const blockCell = document.createElement('td');  // create the block cell
-    blockCell.colSpan = cutthreshold - ncells;   // setting it's row span to be the remaining cells in the row
-    blockCell.className = "blockcell";  // sets the class name for the cell
-    newrow.appendChild(blockCell);  // adds the new cell
-    }
-
-if(title !== '')    // if there is a title meaning it is the header cell
-    {
-    headCell.rowSpan = span;    // update the span
-    }
-
-return span;   // returns 1 so that the span can be updated
-}
-
-function SaveRecordLog(stitchLog)
-{
-const stLog = stitchLog.getAsJSON();
-
-const blob = new Blob([JSON.stringify(stLog, null, 2)], { // creates json blob with the type of json 
-    type: "application/json",
-});
-
-const url = 'http://localhost:8000/write-file?name=' + 'log.json'; // url to upload to
-
-const formdata = new FormData();    // creates the new form to attatch the data to
-formdata.append('file', blob, 'log.json'); // adds the data to the form
-
-fetch(url, {
-    method: 'POST',
-    body: formdata
-})
-.then(response => { // sorting the responce
-    if (!response.ok)   // if the responce is bad
-        throw new Error("Failed to upload file");   // give error message 
-    return response.json(); // return the responce
-})
-.then(data => { // sorting the data
-    console.log('File uploaded successfully:', data);
-})
-.catch(error => {   // catching an error
-    console.error('Error uploading file:', error);
-});
-}
-
-function LoadRecordLog()
-{
-const url = 'http://localhost:8000/read-file?name=' + 'log.json'; // url to load from
-
-const res = fetch(url)  // setting the result to be the fetched data
-.then(response => { // sorting the responce
-    if (!response.ok)   // if the responce is bad
-        throw new Error("Failed to load file");   // give error message 
-    return response.json(); // return the responce
-})
-.then(data => { // sorting the data
-    console.log('File loaded successfully:', data);
-    console.log(data[0]);
-    let stLog = setStitchLogFromJSON(data);
-    console.log(stLog);
-    return stLog;
-})
-.catch(error => {   // catching an error
-    console.error('Error loading file:', error);
-});
-
-return res;
 }
 
 async function CreateWipList()

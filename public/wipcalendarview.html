@@ -8,9 +8,13 @@
 <body>
     <button id="setupStitch" onclick="CreateHTMLStitchTable('2024')">Setup Stitch Table</button>
     <button id="setupWip" onclick="CreateHTMLWipTable()">Setup Wips</button>
-    <button id="saveStitch" onclick="SaveRecordLog()">Save Stitch Table</button>
-    <button id="loadStitch" onclick="LoadRecordLog()">Load Stitch Table</button>
-    <button id="saveWip" onclick="SaveWipTableFile()">Save Wip Table</button>
+
+    <!-- <button id="saveStitch" onclick="SaveStitchLogFile()">Save Stitch Table</button> -->
+    <button id="saveStitch">Save Stitch Table</button>
+    <button id="loadStitch" onclick="LoadStitchLogFile()">Load Stitch Table</button>
+
+    <!-- <button id="saveWip" onclick="SaveWipTableFile()">Save Wip Table</button> -->
+    <button id="saveWip">Save Wip Table</button>
     <button id="loadWip" onclick="LoadWipTableFile()">Load Wip Table</button>
     <hr>
     <table class="wipDetails"></table>
