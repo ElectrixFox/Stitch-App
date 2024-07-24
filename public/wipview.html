@@ -4,15 +4,21 @@
     <link rel="stylesheet" href="css/styles.css">
     <script src="js/main.js" type="module"> </script>
      <script type="module">
-        import { InitialiseWipView, CreateNewWip } from './js/main.js';
+        // To-Do: change this just to be one function called not a bunch of setup
 
+        import { InitialiseWipView, CreateNewWip, RemoveCurrentWip } from './js/main.js';
         window.onload = () => {
             InitialiseWipView();
         }
 
-        document.getElementById('wiplist-newwip').onclick = () => {
+        document.getElementById('wiplist-newwip').onclick = () => { // when new wip is to be created
             CreateNewWip();
         }
+
+        document.getElementById('del_wip').onclick = () => {    // when the confirmation message should be shown
+            RemoveCurrentWip(0);
+        }
+
     </script>
     <title>Wip View</title>
 </head>
@@ -36,5 +42,6 @@
             </div>
         </div>        
     </div>
+    <button class="btn-rem" id="del_wip">Delete Wip</button>
 </body>
 </html>

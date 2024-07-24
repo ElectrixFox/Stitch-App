@@ -158,7 +158,7 @@ dets.forEach(element => {   // going through each of the details and adding thei
 }); 
 
 wipstable.SetWipArr(wipid, item);   // doing the update
-wipstable.SaveWipTableFile();   // saving the file
+wipstable.SaveFile();   // saving the file
 }
 
 export async function CreateHTMLWipTable(wipid = 0)
@@ -278,11 +278,64 @@ const nID = wiptable.AddWip(-1, "", "", "", "", "", "", "", "");    // adds the 
 CreateHTMLWipTable(nID);   // recreates the table
 await CreateWipList();    // creates the new wip list
 
-wiptable.SaveWipTableFile();    // saves the new wip table
+wiptable.SaveFile();    // saves the new wip table
 }
 
 export async function InitialiseWipView()
 {
 CreateHTMLWipTable(await GetTitleWip());
 CreateWipList();
+}
+
+export async function RemoveCurrentWip(status)
+{
+const rembtn = document.getElementById('del_wip');
+
+let resetButton = () => {   // resets the button to its origional settings
+    rembtn.className = 'btn-rem';
+    rembtn.textContent = 'Delete Wip';
+    rembtn.onclick = () => {RemoveCurrentWip(0);};
+};
+
+switch (status)
+    {
+    case -1:    // cancel the removal case
+        {
+        console.log("Cancelling Deletion");
+        resetButton();
+        break;
+        }
+    case 0: // show confirm button case
+        {
+        console.log("Deletion Confirmation Required");
+        rembtn.className = 'btn-conf';  // changes the class so that the styling can be updated
+        rembtn.textContent = 'Confirm'; // changes the text
+        rembtn.onclick = () => {RemoveCurrentWip(1);};  // sets the confirm deletion
+
+        setTimeout(() => {  // creates a timeout so that if the button isn't pressed again after one second deletion is stopped
+            resetButton();
+        }, 1000);
+        break; 
+        }
+    case 1: // able to remove the wip case
+        {
+        console.log("Deleting Wip");
+        resetButton();
+
+        let wiptable = await LoadWipTableFile();
+        const curwip = await GetTitleWip();
+
+        console.log(wiptable, curwip);
+
+        wiptable.RemoveWip(curwip);
+
+        console.log(wiptable);
+
+        wiptable.SaveFile();
+        break;
+        }
+    default:
+        break;
+    }
+
 }

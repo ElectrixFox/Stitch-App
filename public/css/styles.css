@@ -179,3 +179,27 @@ a {
     background: #badaff;
 }
 .wiplist-dropdown:hover .wiplist-content { display: block; }
+
+.btn-rem {
+    width: 5rem;
+    height: 2rem;
+    background-color: #c9e2ff;
+    text-shadow: 4px 4px 4px #ffc3c3;
+    color: #ffae78;
+    border: none;
+    border-radius: 5px;
+}
+
+.btn-rem:hover {
+    background: #badaff;
+}
+
+.btn-conf {
+    width: 5rem;
+    height: 2rem;
+    background-color: #db5252;
+    text-shadow: 4px 4px 4px #000000;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+}

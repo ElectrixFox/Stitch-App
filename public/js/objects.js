@@ -186,7 +186,7 @@ export class WipsTable
     return items;
     }
 
-    SaveWipTableFile()
+    SaveFile()
     {
     const wiptab = this.getAsJSON();
     // console.log(wiptab);
