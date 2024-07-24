@@ -1,4 +1,4 @@
-/* 
+/*
 Tables
 WIPS (wipID, startDate, finishDate, ...)
 STITCHLOG (strecID, wipID, status, date, ...)
@@ -7,11 +7,15 @@ status: Stitched (S), Finished (F), F Finished (FFO), New Start (N)
 Bugs:
 - Ensure that only one new start and finish can exist per WIP
 - Ensure that WIP records cannot be made on the start date and end date
-- All WIPs must have unique names 
+
+Validations:
+- Date validations
+- Status validations
+- All WIPs must have unique names
 */
 
-import { toInt, DateComp, getDateYear, getScheduleLoc, ReplaceSection } from '/js/utilities.js';
-import { WipsTable, StitchLog, SaveJSONFile, LoadJSONFile, SaveWipTableFile, LoadWipTableFile, SaveStitchLogFile, LoadStitchLogFile } from '/js/objects.js';
+import { toInt, getScheduleLoc } from '/js/utilities.js';
+import { WipsTable, StitchLog, SaveJSONFile, LoadJSONFile, LoadWipTableFile, SaveStitchLogFile, LoadStitchLogFile } from '/js/objects.js';
 
 function RemoveHTMLElementChildren(eleID, eleIDstoignore = null)
 {
@@ -154,7 +158,7 @@ dets.forEach(element => {   // going through each of the details and adding thei
 }); 
 
 wipstable.SetWipArr(wipid, item);   // doing the update
-SaveWipTableFile(wipstable);    // saving the file
+wipstable.SaveWipTableFile();   // saving the file
 }
 
 export async function CreateHTMLWipTable(wipid = 0)
@@ -274,7 +278,7 @@ const nID = wiptable.AddWip(-1, "", "", "", "", "", "", "", "");    // adds the 
 CreateHTMLWipTable(nID);   // recreates the table
 await CreateWipList();    // creates the new wip list
 
-SaveWipTableFile(wiptable); // saves the new wip table
+wiptable.SaveWipTableFile();    // saves the new wip table
 }
 
 export async function InitialiseWipView()

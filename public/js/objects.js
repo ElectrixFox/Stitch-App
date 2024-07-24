@@ -1,4 +1,54 @@
 
+export function SaveJSONFile(filename, data)
+{
+const blob = new Blob([JSON.stringify(data, null, 2)], { // creates json blob with the type of json 
+    type: "application/json",
+});
+
+const url = 'http://localhost:8000/write-file?name=' + filename + '.json'; // url to upload to
+
+const formdata = new FormData();    // creates the new form to attatch the data to
+formdata.append('file', blob, filename + '.json'); // adds the data to the form
+
+fetch(url, {
+    method: 'POST',
+    body: formdata
+})
+.then(response => { // sorting the responce
+    if (!response.ok)   // if the responce is bad
+        throw new Error("Failed to upload file");   // give error message 
+    return response.json(); // return the responce
+})
+.then(data => { // sorting the data
+    console.log('File uploaded successfully:', data);
+})
+.catch(error => {   // catching an error
+    console.error('Error uploading file:', error);
+});
+}
+
+export function LoadJSONFile(filename)
+{
+const url = 'http://localhost:8000/read-file?name=' + filename + '.json'; // url to load from
+
+const res = fetch(url)  // setting the result to be the fetched data
+.then(response => { // sorting the responce
+    if (!response.ok)   // if the responce is bad
+        throw new Error("Failed to load file");   // give error message 
+    return response.json(); // return the responce
+})
+.then(data => { // sorting the data
+    console.log('File loaded successfully:', data);
+    console.log(data[0]);
+    return data;
+})
+.catch(error => {   // catching an error
+    console.error('Error loading file:', error);
+});
+
+return res;
+}
+
 export class WipsTable
     {
     constructor(wipID, wipName, designer, stDate, finDate, stitchcount, fabric, floss, notes)
@@ -134,6 +184,13 @@ export class WipsTable
         }
 
     return items;
+    }
+
+    SaveWipTableFile()
+    {
+    const wiptab = this.getAsJSON();
+    console.log(wiptab);
+    SaveJSONFile('wiptable', wiptab);
     }
         
     }
@@ -306,6 +363,13 @@ export class StitchLog
 
     return items;
     }
+
+    SaveFile()
+    {
+    const stlog = this.getAsJSON();
+    console.log(stlog);
+    SaveJSONFile('stitchlog', stlog);
+    }
     }
 
 function setWipTableFromJSON(jsonData)
@@ -360,74 +424,10 @@ for(let i = 0; i < jsonData.length; i++)    // loop through all of the entries
 return new StitchLog(strids, wipids, recdats, recstats);    // creating the stitch log
 }
 
-export function SaveJSONFile(filename, data)
-{
-const blob = new Blob([JSON.stringify(data, null, 2)], { // creates json blob with the type of json 
-    type: "application/json",
-});
-
-const url = 'http://localhost:8000/write-file?name=' + filename + '.json'; // url to upload to
-
-const formdata = new FormData();    // creates the new form to attatch the data to
-formdata.append('file', blob, filename + '.json'); // adds the data to the form
-
-fetch(url, {
-    method: 'POST',
-    body: formdata
-})
-.then(response => { // sorting the responce
-    if (!response.ok)   // if the responce is bad
-        throw new Error("Failed to upload file");   // give error message 
-    return response.json(); // return the responce
-})
-.then(data => { // sorting the data
-    console.log('File uploaded successfully:', data);
-})
-.catch(error => {   // catching an error
-    console.error('Error uploading file:', error);
-});
-}
-
-export function LoadJSONFile(filename)
-{
-const url = 'http://localhost:8000/read-file?name=' + filename + '.json'; // url to load from
-
-const res = fetch(url)  // setting the result to be the fetched data
-.then(response => { // sorting the responce
-    if (!response.ok)   // if the responce is bad
-        throw new Error("Failed to load file");   // give error message 
-    return response.json(); // return the responce
-})
-.then(data => { // sorting the data
-    console.log('File loaded successfully:', data);
-    console.log(data[0]);
-    return data;
-})
-.catch(error => {   // catching an error
-    console.error('Error loading file:', error);
-});
-
-return res;
-}
-
-export function SaveWipTableFile(wiptable)
-{
-const wiptab = wiptable.getAsJSON();
-console.log(wiptab);
-SaveJSONFile('wiptable', wiptab);
-}
-
 export async function LoadWipTableFile()
 {
 let data = await LoadJSONFile('wiptable'); 
 return setWipTableFromJSON(data);
-}
-
-export function SaveStitchLogFile(stitchlog)
-{
-const stlog = stitchlog.getAsJSON();
-console.log(stlog);
-SaveJSONFile('stitchlog', stlog);
 }
 
 export async function LoadStitchLogFile()

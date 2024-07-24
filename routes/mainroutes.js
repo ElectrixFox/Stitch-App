@@ -14,10 +14,10 @@ router.get ('/', (req, res) => {
 router.get ('/:id', (req, res) => {
     const ID = req.params.id;
     console.log("\n\nWelcome to wipview for " + ID);
-    const pathm = path.join(__dirname, '..', 'public', 'wipview.html');
+    const pathm = path.join(__dirname, '..', 'public', 'wipview.html'); // creates the path to the wip view html
 
     console.log(pathm);
-    res.sendFile(pathm);
+    res.sendFile(pathm);    // sends the static file back to be shown
 });
 
 module.exports = router;
