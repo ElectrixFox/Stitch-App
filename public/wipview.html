@@ -2,20 +2,18 @@
 <html>
 <head>
     <link rel="stylesheet" href="css/styles.css">
-    <!--
-    <script src="main.js" type="module"> </script>
+    <script src="js/main.js" type="module"> </script>
      <script type="module">
-        import { CreateHTMLWipTable, CreateWipList, CreateNewWip } from './main.js';
+        import { InitialiseWipView, CreateNewWip } from './js/main.js';
 
         window.onload = () => {
-            CreateHTMLWipTable(1);
-            CreateWipList();
+            InitialiseWipView();
         }
 
         document.getElementById('wiplist-newwip').onclick = () => {
             CreateNewWip();
         }
-    </script> -->
+    </script>
     <title>Wip View</title>
 </head>
 <body>

@@ -28,6 +28,18 @@ export class WipsTable
     return -1;
     }
 
+    findWipName(wipnam)
+    {
+    for (let i = 0; i < this.nowips; i++)   // loop through all of the wips
+        {
+        if(this.wipName[i] === wipnam) // if the wip with the correct name is found then exit the loop
+            {
+            return this.wipID[i];
+            }
+        }
+    return -1;
+    }
+
     findNextNumber()
     {
     let tmpno = this.nowips;
@@ -296,7 +308,7 @@ export class StitchLog
     }
     }
 
-export function setWipTableFromJSON(jsonData)
+function setWipTableFromJSON(jsonData)
 {
 let new_wipID = []
 let new_wipName = []
@@ -327,7 +339,7 @@ for(let i = 0; i < jsonData.length; i++)    // loop through all of the entries
 return new WipsTable(new_wipID, new_wipName, new_designer, new_stDate, new_finDate, new_stitchcount, new_fabric, new_floss, new_notes);    // creating the wip table
 }
 
-export function setStitchLogFromJSON(jsonData)
+function setStitchLogFromJSON(jsonData)
 {
 let strids = [];
 let wipids = [];

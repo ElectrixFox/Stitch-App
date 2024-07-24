@@ -3,17 +3,15 @@ Tables
 WIPS (wipID, startDate, finishDate, ...)
 STITCHLOG (strecID, wipID, status, date, ...)
 status: Stitched (S), Finished (F), F Finished (FFO), New Start (N)
-*/
 
-/*
 Bugs:
 - Ensure that only one new start and finish can exist per WIP
 - Ensure that WIP records cannot be made on the start date and end date
+- All WIPs must have unique names 
 */
 
-import { toInt, DateComp, getDateYear, getScheduleLoc, ReplaceSection } from '/utilities.js';
-import {    WipsTable, StitchLog, setWipTableFromJSON, setStitchLogFromJSON, SaveJSONFile, 
-            LoadJSONFile, SaveWipTableFile, LoadWipTableFile, SaveStitchLogFile, LoadStitchLogFile } from '/objects.js';
+import { toInt, DateComp, getDateYear, getScheduleLoc, ReplaceSection } from '/js/utilities.js';
+import { WipsTable, StitchLog, SaveJSONFile, LoadJSONFile, SaveWipTableFile, LoadWipTableFile, SaveStitchLogFile, LoadStitchLogFile } from '/js/objects.js';
 
 function RemoveHTMLElementChildren(eleID, eleIDstoignore = null)
 {
@@ -115,6 +113,23 @@ return urlParams.get(name);
 
 function GetCurrentWip() { return GetQueryParameter('wipid'); }
 
+export async function GetTitleWip()
+{
+let wiptab = await LoadWipTableFile();    // get a wip table to search for the located wip
+const url = window.location.pathname;   // gets the path to the current location
+const steps = url.split('/');   // splits the url into all the '/'s
+let wiploc = -1;
+
+let wipnam = steps.pop();   // returns the last element which would be the wip name in the cases where this function is to be used
+if(wipnam.includes('%20')) // if there is a space indicator in the name
+    wipnam = wipnam.replace('%20', ' '); // replace the %20 space indicator with an actual space
+
+wiploc = wiptab.findWipName(wipnam);    // gets the location of the wip in the wiptable
+
+console.log("Url: %s\t\tWip: %s\t\tLoc: %d", url, wipnam, wiploc);
+return wiploc;  // return the ID of the located wip
+}
+
 export async function UpdateWip(tab, wipid)
 {
 let wipstable = await LoadWipTableFile();   // loads the table from the file
@@ -146,6 +161,7 @@ export async function CreateHTMLWipTable(wipid = 0)
 {
 let wipstable = await LoadWipTableFile();
 const wiploc = wipstable.findWip(wipid);
+console.log("Found wip %d at: %d", wipid, wiploc);
 
 let createBlock = (intable, title, content) => {
     const nrow = intable.insertRow();
@@ -259,4 +275,10 @@ CreateHTMLWipTable(nID);   // recreates the table
 await CreateWipList();    // creates the new wip list
 
 SaveWipTableFile(wiptable); // saves the new wip table
+}
+
+export async function InitialiseWipView()
+{
+CreateHTMLWipTable(await GetTitleWip());
+CreateWipList();
 }
