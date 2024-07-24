@@ -15,7 +15,7 @@ Validations:
 */
 
 import { toInt, getScheduleLoc } from '/js/utilities.js';
-import { WipsTable, StitchLog, SaveJSONFile, LoadJSONFile, LoadWipTableFile, SaveStitchLogFile, LoadStitchLogFile } from '/js/objects.js';
+import { WipsTable, StitchLog, LoadWipTableFile, LoadStitchLogFile } from '/js/objects.js';
 
 function RemoveHTMLElementChildren(eleID, eleIDstoignore = null)
 {

@@ -1,5 +1,5 @@
 
-export function SaveJSONFile(filename, data)
+function SaveJSONFile(filename, data)
 {
 const blob = new Blob([JSON.stringify(data, null, 2)], { // creates json blob with the type of json 
     type: "application/json",
@@ -27,7 +27,7 @@ fetch(url, {
 });
 }
 
-export function LoadJSONFile(filename)
+function LoadJSONFile(filename)
 {
 const url = 'http://localhost:8000/read-file?name=' + filename + '.json'; // url to load from
 
@@ -39,7 +39,7 @@ const res = fetch(url)  // setting the result to be the fetched data
 })
 .then(data => { // sorting the data
     console.log('File loaded successfully:', data);
-    console.log(data[0]);
+    // console.log(data[0]);
     return data;
 })
 .catch(error => {   // catching an error
@@ -52,19 +52,19 @@ return res;
 export class WipsTable
     {
     constructor(wipID, wipName, designer, stDate, finDate, stitchcount, fabric, floss, notes)
-        {
-        this.wipID = wipID;
-        this.wipName = wipName;
-        this.designer = designer;
-        this.stDate = stDate;
-        this.finDate = finDate;
-        this.stitchcount = stitchcount;
-        this.fabric = fabric;
-        this.floss = floss;
-        this.notes = notes;
+    {
+    this.wipID = wipID;
+    this.wipName = wipName;
+    this.designer = designer;
+    this.stDate = stDate;
+    this.finDate = finDate;
+    this.stitchcount = stitchcount;
+    this.fabric = fabric;
+    this.floss = floss;
+    this.notes = notes;
 
-        this.nowips = this.wipID.length;
-        }
+    this.nowips = this.wipID.length;
+    }
     
     findWip(wipID)
     {
@@ -189,7 +189,7 @@ export class WipsTable
     SaveWipTableFile()
     {
     const wiptab = this.getAsJSON();
-    console.log(wiptab);
+    // console.log(wiptab);
     SaveJSONFile('wiptable', wiptab);
     }
         
@@ -370,6 +370,7 @@ export class StitchLog
     console.log(stlog);
     SaveJSONFile('stitchlog', stlog);
     }
+
     }
 
 function setWipTableFromJSON(jsonData)
@@ -435,4 +436,3 @@ export async function LoadStitchLogFile()
 let data = await LoadJSONFile('stitchlog'); 
 return setStitchLogFromJSON(data);
 }
-    

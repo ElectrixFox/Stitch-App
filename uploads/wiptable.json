@@ -68,7 +68,7 @@
   {
     "wipID": 7,
     "wipName": "Graceful summer",
-    "designer": "",
+    "designer": "Barny Ban",
     "stDate": "",
     "finDate": "",
     "stitchcount": "",
@@ -79,6 +79,17 @@
   {
     "wipID": 8,
     "wipName": "Manzina",
+    "designer": "",
+    "stDate": "",
+    "finDate": "",
+    "stitchcount": "",
+    "fabric": "",
+    "floss": "",
+    "notes": ""
+  },
+  {
+    "wipID": 9,
+    "wipName": "New Wip",
     "designer": "",
     "stDate": "",
     "finDate": "",
