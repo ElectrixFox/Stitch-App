@@ -317,7 +317,7 @@ export class StitchLog
     let IDs = [];
     this.SortLogByDate();
 
-    // Improvement: could probably turn this into a binary search to the first occurance of the date
+    // Improvement: could probably turn this into a binary search to the first occurrence of the date
     // Improvement: possible improvement, stop adding when the date changes after adding has started
 
     for (let i = 0; i < this.loglen; i++)    // loop through all records
