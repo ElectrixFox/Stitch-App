@@ -1,3 +1,39 @@
+/* Help sheet
+#ID - style dependent on the ID of the object
+Example:
+#wipYearView {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+    border: 3px solid black;
+}
+
+#ID type - style dependent on the ID of the object and its element type
+Example:
+#wipYearView th {
+    border: 1px solid black;
+    text-align: left;
+    width: 20%;
+}
+
+.classname - style dependent on the class of the object
+Example:
+.wipyrview {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+    border: 3px solid black;
+}
+
+.classname type - style dependent on the class of the object and its element type
+Example:
+.wipDetails td {
+    border: 1px solid black;
+    padding: 8px;
+    width: 80%;
+    text-align: left;
+}
+*/
 
 .wipDetails {
     border-collapse: collapse;
@@ -19,20 +55,20 @@
     text-align: left;
 }
 
-#wipYearView {
+.wipyrview {
     table-layout: fixed;
     width: 100%;
     border-collapse: collapse;
     border: 3px solid black;
 }
 
-#wipYearView th {
+.wipyrview th {
     border: 1px solid black;
     text-align: left;
     width: 20%;
 }
 
-#wipYearView td {
+.wipyrview td {
     border: 1px solid black;
     text-align: left;
     width: 10%;
@@ -74,7 +110,7 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
-  }
+}
 
 .item a {
     position: relative;
@@ -82,7 +118,7 @@
     font-size: 20px;
     text-transform: uppercase;
     cursor: pointer;
-  }
+}
 
 .item a:hover {
     transition: color 150ms ease-in;
@@ -96,7 +132,7 @@ a {
     text-shadow: 4px 4px 4px #ffc3c3;
     color: #ffae78;
     text-align: center;
-  }
+}
 /* to here */
 
 .wiplist ul {
@@ -173,7 +209,7 @@ a {
     text-shadow: 4px 4px 4px #ffc3c3;
     color: #ffae78;
     text-align: center;
-  }
+}
 
 .wiplist-content a:hover {
     background: #badaff;
