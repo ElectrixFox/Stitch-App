@@ -198,17 +198,14 @@ createBlock(wiptab, "Notes", wipstable.notes[wiploc]);
 
 }
 
-export async function CreateHTMLStitchTable(year)
+export async function CreateHTMLWipLogView(wipid = 0, year)
 {
 let stitchlog = await LoadStitchLogFile();
 let daysinmo = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];    // number of days in each month
 const months = ["January", "Feburary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 let table = document.getElementById("wipYearView");
 let logcells = [];
-const wipid = 1;
 let logrecords = stitchlog.findRecordsForWip(wipid);    // gets all of the log records for the given wip
-
-CreateHTMLWipTable(wipid);
 
 if ((toInt(year) % 4) === 0)    // if it is a leap year
     daysinmo[1] = 29;   // set Feb to have 29 days
@@ -285,6 +282,7 @@ export async function InitialiseWipView()
 {
 CreateHTMLWipTable(await GetTitleWip());
 CreateWipList();
+CreateHTMLWipLogView(await GetTitleWip(), '2024');
 }
 
 export async function RemoveCurrentWip(status)
