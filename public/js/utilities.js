@@ -28,6 +28,9 @@ return -2;  // return -2 for an error
 // gets the year part from the date (in the format dd/mm/yyyy)
 export function getDateYear(dat) { return toInt(dat.substring(6, 10)); }
 
+// gets the day part from the date (in the format dd/mm/yyyy)
+export function getDateDay(dat) { return toInt(dat.substring(0, 2)); }
+
 export function getScheduleLoc(dat)
 {
 let daysinmo = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];    // number of days in each month

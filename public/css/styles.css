@@ -74,14 +74,25 @@ Example:
     width: 10%;
 }
 
-.numcell {
+/* .tablecell {
     border: 1px solid black;
     color: rgba(136, 136, 136, 0.5);
     text-align: left;
-    width: 10%;
+    width: 1rem;
+    height: 1rem;
+} */
+
+.wipyrview input {
+    color: rgba(136, 136, 136, 0.5);
+    background-color: transparent;
+    background: transparent;
+    border: none;
+    text-align: left;
+    color: #ff0000;
+    width: 100%;
 }
 
-.numcell:hover {
+.tablecell:hover {
     color: rgba(136, 136, 136, 1);
 }
 

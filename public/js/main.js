@@ -14,7 +14,7 @@ Validations:
 - All WIPs must have unique names
 */
 
-import { toInt, getScheduleLoc, getDateFromScheduleLoc} from '/js/utilities.js';
+import { toInt, getScheduleLoc, getDateFromScheduleLoc, getDateDay } from '/js/utilities.js';
 import { WipsTable, StitchLog, LoadWipTableFile, LoadStitchLogFile } from '/js/objects.js';
 
 function RemoveHTMLElementChildren(eleID, eleIDstoignore = null)
@@ -56,7 +56,7 @@ else
     }
 }
 
-function AddRow(table, title, ncells = 0, numbered = 0, curplace = -1)
+function AddRow(table, title, ncells = 0, curplace = -1)
 {
 let newrow = table.insertRow();
 const headCell = document.createElement('th');  // create the header cell
@@ -80,16 +80,12 @@ for (i = 0; i < ncells; i++)    // loop through and add ncells number of cells
     {
     if(i === cutthreshold)  // if the threshold to start a new row is reached
         {
-        span = AddRow(table, '', ncells - cutthreshold, numbered, curplace) + 1;    // this sets the span to be the number of rows already added plus the new row to be added
+        span = AddRow(table, '', ncells - cutthreshold, curplace) + 1;    // this sets the span to be the number of rows already added plus the new row to be added
         break;
         }
 
     const tmpCell = document.createElement('td');   // create the new cell element
-    if(numbered === 1)  // if the cells should be numbered
-        {
-        tmpCell.textContent = curplace + i + 1;    // set the number
-        tmpCell.className = "numcell";  // setting it to be a numbered cell class
-        }
+    // tmpCell.className = "tablecell";  // setting it to be a numbered cell class
     newrow.appendChild(tmpCell);    // add the cell to the row
     }
 
@@ -209,19 +205,11 @@ let logcells = [];
 let logrecords = stitchlog.findRecordsForWip(wipid);    // gets all of the log records for the given wip
 const wiploc = wiptable.findWip(wipid);   // finds the wip in the wip table
 
-let setCell = (loc, tag, editable = false, classnam = 'null') =>   // a short function to set the details of the cell created 
-    {
-    let curcell = logcells[toInt(getScheduleLoc(loc))];  // getting the location of the record in the schedule and finding it in the log cells
-    curcell.textContent = tag;    // setting it as the given tag
-    curcell.contentEditable = editable;    // allows the cell to be changeable or not
-    curcell.className = classnam;   // sets the class to the given class name
-    }
-
 if ((toInt(year) % 4) === 0)    // if it is a leap year
     daysinmo[1] = 29;   // set Feb to have 29 days
 
 for (let mon = 0; mon < 12; mon++)  // loop through all months in the year
-    AddRow(table, months[mon], daysinmo[mon], 1);   // adds a row with daysinmo number of cells
+    AddRow(table, months[mon], daysinmo[mon]);   // adds a row with daysinmo number of cells
 
 let edcells = table.querySelectorAll('td'); // finds all of the cells
 for (let i = 0; i < edcells.length; i++)    // loop through all of the editable cells
@@ -231,37 +219,41 @@ for (let i = 0; i < edcells.length; i++)    // loop through all of the editable 
 for (let i = 0; i < logcells.length; i++)
     {
     const td = logcells[i];
-    td.contentEditable = true;  // the contents of the cells can be changed
-    td.onclick = () =>    // setting up the update cell callback
+    td.contentEditable = false;  // the contents of the cells can be changed
+    const inp = document.createElement('input');    // creating the input element
+    inp.type = "text";  // setting the type of input
+    inp.placeholder = (getDateDay(getDateFromScheduleLoc(i, year))).toString();   // setting the number to be shown in temp
+    
+    inp.onchange = () =>    // setting up the update cell callback
         {
         console.log("Change made");
-        stitchlog.UpdateStitchRecordsAt(wipid, getDateFromScheduleLoc(i, year), td.textContent);
+        stitchlog.UpdateStitchRecordsAt(wipid, getDateFromScheduleLoc(i, year), inp.value); // updates the stitch log with the new information
         }   // To-Do: add the functionality to have a dropdown menu to select the state of the cell
+
+    td.appendChild(inp);    // adds the input to the new cell
     }
-/* logcells.forEach(td => {
-    td.contentEditable = true;  // the contents of the cells can be changed
-    td.onchange = () =>    // setting up the update cell callback
-        {
-        stitchlog.UpdateStitchRecordsAt(wipid, getDateFromScheduleLoc());
-        }
-    // To-Do: add the functionality to have a dropdown menu to select the state of the cell
-}); // for each loop through all of the td cells */
 
 for (let i = 0; i < logrecords.length; i++) 
     {
     if(stitchlog.getRecordYear(logrecords[i]) !== year) // if the year of the record isn't the same year as the input year
-        {
         continue;   // move to next record
-        }
         
     const recloc = stitchlog.findRecord(logrecords[i]);    // gets the location of the record in the stitch log
-    setCell(stitchlog.recDate[recloc], stitchlog.recStatus[recloc], true, 'reccell');  // setting the cell to be at the correct position and with the record details and editable
+    logcells[toInt(getScheduleLoc(stitchlog.recDate[recloc]))].childNodes[0].value = stitchlog.recStatus[recloc];   // setting the cell to be at the correct position and with the record details
     }
 
-setCell(wiptable.stDate[wiploc], 'N', false);  // setting the cell to be at the start date of the wip with tag 'N' and not changeable
-
+if(wiptable.stDate[wiploc] !== 'null')  // if there is a start date
+    {
+    const mitem = logcells[toInt(getScheduleLoc(wiptable.stDate[wiploc]))];   // getting the node at the start date location
+    mitem.removeChild(mitem.childNodes[0]); // removing the input field
+    mitem.textContent = 'N';    // setting the cell to be at the start date of the wip with tag 'N'
+    }
 if(wiptable.finDate[wiploc] !== 'null') // if there is a finish date add this in
-    setCell(wiptable.finDate[wiploc], 'F', false);  // setting the cell to be at the end date of the wip with tag 'F' and not changeable
+    {
+    const mitem = logcells[toInt(getScheduleLoc(wiptable.finDate[wiploc]))];  // getting the node at the end date location
+    mitem.removeChild(mitem.childNodes[0]); // removing the input field
+    mitem.textContent = 'F';    // setting to be the finish cell
+    }
 }
 
 export async function CreateWipList()
