@@ -269,7 +269,7 @@ export class StitchLog
 
     findNextNumber()
     {
-    let tmpno = this.loglen();
+    let tmpno = this.loglen;
     let find = this.findRecord(tmpno);
 
     while (find != -1)  // while the records are being found
@@ -344,6 +344,32 @@ export class StitchLog
         }
     
     return IDs;
+    }
+
+    UpdateStitchRecordsAt(wipID, date, status)
+    {
+    let upd = 0;    // should update or add
+    let recsondat = this.findRecordsOnDate(date);   // gets all the records on the given date
+    let recloc = 0; // location of record to be updated or of new record
+
+    for (let i = 0; i < recsondat.length; i++)  // search through all of the records on the date
+        {
+        recloc = this.findRecord(recsondat[i]); // gets the location of the record
+        if(this.wipID[recloc] === wipID) // if there is a record with the same wip ID
+            upd = 1;    // set this record to be updated
+        }
+    
+    if(upd === 1)    // if there should be an update
+        {
+        if((status === null) || (status === "")) // if the status is null delete the record
+            this.RemoveRecord(this.strecID[recloc]);    // remove the record at the given location since this requires the record to be removed
+        else    // otherwise the record should be updated
+            this.recStatus[recloc] = status;   // set to the new status
+        }
+    else    // should add a new record
+        this.AddRecord(-1, wipID, date, status);    // add the new record
+
+    this.SaveFile();    // save the changes
     }
 
     getAsJSON()

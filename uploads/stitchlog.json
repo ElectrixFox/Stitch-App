@@ -1,62 +1,62 @@
 [
-    {
-      "strecID": 6,
-      "wipID": 2,
-      "recDate": "01/01/2024",
-      "recStatus": "N"
-    },
-    {
-      "strecID": 1,
-      "wipID": 2,
-      "recDate": "02/01/2024",
-      "recStatus": "N"
-    },
-    {
-      "strecID": 4,
-      "wipID": 5,
-      "recDate": "04/01/2024",
-      "recStatus": "F"
-    },
-    {
-      "strecID": 5,
-      "wipID": 1,
-      "recDate": "05/01/2024",
-      "recStatus": "N"
-    },
-    {
-      "strecID": 9,
-      "wipID": 5,
-      "recDate": "06/01/2024",
-      "recStatus": "F"
-    },
-    {
-      "strecID": 10,
-      "wipID": 1,
-      "recDate": "06/01/2024",
-      "recStatus": "F"
-    },
-    {
-      "strecID": 8,
-      "wipID": 3,
-      "recDate": "08/01/2024",
-      "recStatus": "N"
-    },
-    {
-      "strecID": 3,
-      "wipID": 3,
-      "recDate": "09/01/2024",
-      "recStatus": "FFO"
-    },
-    {
-      "strecID": 2,
-      "wipID": 2,
-      "recDate": "10/01/2024",
-      "recStatus": "S"
-    },
-    {
-      "strecID": 7,
-      "wipID": 3,
-      "recDate": "10/01/2024",
-      "recStatus": "S"
-    }
-  ]
+  {
+    "strecID": 6,
+    "wipID": 2,
+    "recDate": "01/01/2024",
+    "recStatus": "S"
+  },
+  {
+    "strecID": 1,
+    "wipID": 2,
+    "recDate": "02/01/2024",
+    "recStatus": "S"
+  },
+  {
+    "strecID": 4,
+    "wipID": 5,
+    "recDate": "04/01/2024",
+    "recStatus": "S"
+  },
+  {
+    "strecID": 5,
+    "wipID": 1,
+    "recDate": "05/01/2024",
+    "recStatus": "S"
+  },
+  {
+    "strecID": 9,
+    "wipID": 5,
+    "recDate": "06/01/2024",
+    "recStatus": "S"
+  },
+  {
+    "strecID": 8,
+    "wipID": 3,
+    "recDate": "08/01/2024",
+    "recStatus": "N"
+  },
+  {
+    "strecID": 10,
+    "wipID": 1,
+    "recDate": "08/01/2024",
+    "recStatus": "S"
+  },
+  {
+    "strecID": 3,
+    "wipID": 3,
+    "recDate": "09/01/2024",
+    "recStatus": "FFO"
+  },
+  {
+    "strecID": 2,
+    "wipID": 2,
+    "recDate": "10/01/2024",
+    "recStatus": "S"
+  },
+  {
+    "strecID": 7,
+    "wipID": 3,
+    "recDate": "10/01/2024",
+    "recStatus": "S"
+  }
+]

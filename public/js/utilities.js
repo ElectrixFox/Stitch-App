@@ -31,18 +31,37 @@ export function getDateYear(dat) { return toInt(dat.substring(6, 10)); }
 export function getScheduleLoc(dat)
 {
 let daysinmo = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];    // number of days in each month
-let month = dat.substring(3, 5);    // gets month part of the date
-const day = dat.substring(0, 2);    // gets day part of the date
-let res = day;
+let month = toInt(dat.substring(3, 5));    // gets month part of the date
+const day = toInt(dat.substring(0, 2));    // gets day part of the date
+let res = day - 1;  // - 1 as index starts at 0
 
 if ((toInt(getDateYear(dat)) % 4) === 0)    // if it is a leap year
     daysinmo[1] = 29;   // set Feb to have 29 days
 
-for (let i = 0; i < month; i++) // loops through months until month of given date
+for (let i = 0; i < (month - 1); i++) // loops through months (-1 since we don't want to include the current month) until month of given date
     {
-    res += daysinmo[month]; // adds days in previous month to the result
+    res += daysinmo[i]; // adds days in previous month to the result
     }
 
+return res;
+}
+
+export function getDateFromScheduleLoc(loc, year)
+{
+let daysinmo = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];    // number of days in each month
+let month = 0;
+let day = loc;
+let res = "";
+
+if ((year % 4) === 0)    // if it is a leap year
+    daysinmo[1] = 29;   // set Feb to have 29 days
+
+while(day >= daysinmo[month])  // while the number of days is greater than or equal to the number in the next month
+    {
+    day -= daysinmo[month++]; // subtract the number of days in the month and increment the month number
+    }
+
+res = (day + 1).toString().padStart(2, '0') + '/' + (month + 1).toString().padStart(2, '0') + '/' + year; // creating the date in the form dd/mm/yyyy
 return res;
 }
 

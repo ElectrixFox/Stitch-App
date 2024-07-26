@@ -14,7 +14,7 @@ Validations:
 - All WIPs must have unique names
 */
 
-import { toInt, getScheduleLoc } from '/js/utilities.js';
+import { toInt, getScheduleLoc, getDateFromScheduleLoc} from '/js/utilities.js';
 import { WipsTable, StitchLog, LoadWipTableFile, LoadStitchLogFile } from '/js/objects.js';
 
 function RemoveHTMLElementChildren(eleID, eleIDstoignore = null)
@@ -198,14 +198,24 @@ createBlock(wiptab, "Notes", wipstable.notes[wiploc]);
 
 }
 
-export async function CreateHTMLWipLogView(wipid = 0, year)
+export async function CreateHTMLWipLogView(wipid, year)
 {
 let stitchlog = await LoadStitchLogFile();
+let wiptable = await LoadWipTableFile();
 let daysinmo = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];    // number of days in each month
 const months = ["January", "Feburary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 let table = document.getElementById("wipYearView");
 let logcells = [];
 let logrecords = stitchlog.findRecordsForWip(wipid);    // gets all of the log records for the given wip
+const wiploc = wiptable.findWip(wipid);   // finds the wip in the wip table
+
+let setCell = (loc, tag, editable = false, classnam = 'null') =>   // a short function to set the details of the cell created 
+    {
+    let curcell = logcells[toInt(getScheduleLoc(loc))];  // getting the location of the record in the schedule and finding it in the log cells
+    curcell.textContent = tag;    // setting it as the given tag
+    curcell.contentEditable = editable;    // allows the cell to be changeable or not
+    curcell.className = classnam;   // sets the class to the given class name
+    }
 
 if ((toInt(year) % 4) === 0)    // if it is a leap year
     daysinmo[1] = 29;   // set Feb to have 29 days
@@ -218,10 +228,24 @@ for (let i = 0; i < edcells.length; i++)    // loop through all of the editable 
     if(edcells[i].className !== "blockcell")    // if the class name isn't blockcell
         logcells.push(edcells[i]);  // add the log cells to the cell list
 
-logcells.forEach(td => {
+for (let i = 0; i < logcells.length; i++)
+    {
+    const td = logcells[i];
     td.contentEditable = true;  // the contents of the cells can be changed
+    td.onclick = () =>    // setting up the update cell callback
+        {
+        console.log("Change made");
+        stitchlog.UpdateStitchRecordsAt(wipid, getDateFromScheduleLoc(i, year), td.textContent);
+        }   // To-Do: add the functionality to have a dropdown menu to select the state of the cell
+    }
+/* logcells.forEach(td => {
+    td.contentEditable = true;  // the contents of the cells can be changed
+    td.onchange = () =>    // setting up the update cell callback
+        {
+        stitchlog.UpdateStitchRecordsAt(wipid, getDateFromScheduleLoc());
+        }
     // To-Do: add the functionality to have a dropdown menu to select the state of the cell
-}); // for each loop through all of the td cells
+}); // for each loop through all of the td cells */
 
 for (let i = 0; i < logrecords.length; i++) 
     {
@@ -229,14 +253,15 @@ for (let i = 0; i < logrecords.length; i++)
         {
         continue;   // move to next record
         }
+        
     const recloc = stitchlog.findRecord(logrecords[i]);    // gets the location of the record in the stitch log
-    let curcell = logcells[toInt(getScheduleLoc(stitchlog.recDate[recloc]))];   // gets the cell to change
-
-    console.log(curcell);
-    curcell.textContent = stitchlog.recStatus[recloc];    // setting it as a new start
-    curcell.contentEditable = false;    // stops the cell being changeable
-    curcell.className = null;   // clears the class
+    setCell(stitchlog.recDate[recloc], stitchlog.recStatus[recloc], true, 'reccell');  // setting the cell to be at the correct position and with the record details and editable
     }
+
+setCell(wiptable.stDate[wiploc], 'N', false);  // setting the cell to be at the start date of the wip with tag 'N' and not changeable
+
+if(wiptable.finDate[wiploc] !== 'null') // if there is a finish date add this in
+    setCell(wiptable.finDate[wiploc], 'F', false);  // setting the cell to be at the end date of the wip with tag 'F' and not changeable
 }
 
 export async function CreateWipList()
