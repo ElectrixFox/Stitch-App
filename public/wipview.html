@@ -3,7 +3,7 @@
 <head>
     <link rel="stylesheet" href="css/styles.css">
     <script src="js/main.js" type="module"> </script>
-     <script type="module">
+    <script type="module">
         // To-Do: change this just to be one function called not a bunch of setup
 
         import { InitialiseWipView, CreateNewWip, RemoveCurrentWip } from './js/main.js';
@@ -42,7 +42,10 @@
             </div>
         </div>        
     </div>
-    <button class="btn-rem" id="del_wip">Delete Wip</button>
+    <div>
+        <button class="btn-rem item-left" id="del_wip">Delete Wip</button>
+        <button class="btn-rem item-right" id="ch_view"><a href="../wipoverview/1">Change View</a></button>
+    </div>
     <hr>
     <table class="wipyrview" id="wipYearView">
         <caption>

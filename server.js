@@ -14,7 +14,8 @@ app.get('/', (req, res) => {   // getting a callback from going to '/'
     res.redirect('index.html');
 });
 
-const mainRouter = require('./routes/mainroutes');  // importing the main routes
+const wipRouter = require('./routes/wiproutes');  // importing the wip routes
+const overviewRouter = require('./routes/overviewroutes');  // importing the wip overview routes
 const fileRouter = require('./routes/fileroutes');  // importing the file handling routes
 
 app.get ('/index', (req, res) => {
@@ -24,7 +25,8 @@ app.get ('/index', (req, res) => {
     res.sendFile(pathm);
 });
 
-app.use('/wipview', mainRouter);   // use the main router
+app.use('/wipview', wipRouter);   // use the wip router
+app.use('/wipoverview', overviewRouter);   // use the overview router
 app.use('/', fileRouter);   // use the file router
 
 app.listen(port, hostname);
