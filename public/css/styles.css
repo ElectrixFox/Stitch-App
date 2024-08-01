@@ -250,3 +250,22 @@ a {
     border: none;
     border-radius: 5px;
 }
+
+.wipmonview {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+    border: 3px solid black;    
+}
+
+.wipmonview th {
+    color: #000000;
+    width: 5rem;
+    text-wrap: wrap;
+    border: 1px solid #000000;
+}
+
+.wipmonview td {
+    width: 2rem;
+    border: 1px solid #000000;
+}

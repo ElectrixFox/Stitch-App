@@ -4,8 +4,11 @@
     <link rel="stylesheet" href="css/styles.css">
     <script src="js/main.js" type="module"> </script>
      <script type="module">
-
-
+        import { InitialiseMonthView } from './js/main.js';
+        
+        window.onload = () => {
+            InitialiseMonthView();
+        }
      </script>
     <title>Wip Overview</title>
 </head>
@@ -14,12 +17,12 @@
         <ul class="nav">
             <li class="item"><a href="../index">Home</a> </li>
             <li class="item"><a href="#">New Starts</a> </li>
-            <li class="item"><a href="../wipview/1">WIPS</a> </li>
+            <li class="item"><a href="../wips/wipview?w=1">WIPS</a> </li>
             <li class="item"><a href="#">Finishes</a> </li>
             <li class="item"><a href="#">Quick Links</a> </li>
         </ul>
     </nav>
-    <table class="wipMonView" id="wipoverview">
+    <table class="wipmonview" id="wipoverview">  <!-- change class to "wipMonView" once the styling has been completed -->
         <caption>
             Month view
         </caption>

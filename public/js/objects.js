@@ -69,9 +69,9 @@ export class WipsTable
     
     findWip(wipID)
     {
-    for (let i = 0; i < this.nowips; i++)   // loop through all of the wips
+    for (let i = 0; i < this.wipID.length; i++)   // loop through all of the wips
         {
-        if(this.wipID[i] === wipID) // if the wip with the correct ID is found then exit the loop
+        if(this.wipID[i] == wipID) // if the wip with the correct ID is found then exit the loop
             {
             return i;
             }
@@ -327,6 +327,30 @@ export class StitchLog
             IDs.push(this.strecID[i]);    // add the ID of the record to the ID array
             }
         }
+    
+    return IDs;
+    }
+   
+    // returns IDs of records made in the month
+    findRecordsInMonth(month, yr = 2024)
+    {
+    let IDs = [];
+    let daysinmo = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];    // number of days in each month
+    if ((yr % 4) === 0) // accounting for the leap year
+        daysinmo[1] = 29;
+    
+    this.SortLogByDate();
+
+    for (let day = 0; day < daysinmo[month - 1]; day++)
+        {
+        const serchdat = (day + 1).toString().padStart(2, '0') + '/' + month.toString().padStart(2, '0') + '/' + yr.toString();    // creating the date in form dd/mm/yyyy
+        const idsfound = this.findRecordsOnDate(serchdat);  // the ids of the records on the date
+
+        if(idsfound.length !== 0)   // if there are ids in the list
+            IDs.push(idsfound); // add the ids to the list of ids in the month
+        }
+
+    IDs = IDs.flat(1);  // flattens the array to only have a 1D array not a 2D array
     
     return IDs;
     }

@@ -85,7 +85,6 @@ for (i = 0; i < ncells; i++)    // loop through and add ncells number of cells
         }
 
     const tmpCell = document.createElement('td');   // create the new cell element
-    // tmpCell.className = "tablecell";  // setting it to be a numbered cell class
     newrow.appendChild(tmpCell);    // add the cell to the row
     }
 
@@ -111,7 +110,9 @@ const urlParams = new URLSearchParams(window.location.search);
 return urlParams.get(name);
 }
 
-function GetCurrentWip() { return GetQueryParameter('wipid'); }
+function GetCurrentWip() { return GetQueryParameter('w'); }
+function GetCurrentMonth() { return GetQueryParameter('m'); }
+function GetCurrentYear() { return GetQueryParameter('y'); }
 
 export async function GetTitleWip()
 {
@@ -262,10 +263,10 @@ let wiptable = await LoadWipTableFile();    // loads the wip table in
 const wiplist = document.getElementById("wiplist-content"); // gets the wip list element
 const btn = document.getElementById("wiplist-newwip");  // gets the new wip button
 
-let newitem = (name) => {   // function to create a new list item
+let newitem = (wipid, name) => {   // function to create a new list item
     const newref = document.createElement('a'); // creates the new link
 
-    newref.href = name; // sets the link as the wip name
+    newref.href = "wipview?w=" + wipid; // sets the link as the wip id
     newref.textContent = name;  // sets the content as wip name
     newref.className = "wiplist-content";   // sets the styling class
     newref.id = 'wiplist-item';   // sets the ID of the entry
@@ -275,7 +276,7 @@ let newitem = (name) => {   // function to create a new list item
 
 for (let i = 0; i < wiptable.nowips; i++)   // loop through all of the wips
     {
-    newitem(wiptable.wipName[i]);   // adds each wip to the list
+    newitem(wiptable.wipID[i], wiptable.wipName[i]);   // adds each wip to the list
     }
 }
 
@@ -297,9 +298,9 @@ wiptable.SaveFile();    // saves the new wip table
 
 export async function InitialiseWipView()
 {
-CreateHTMLWipTable(await GetTitleWip());
+CreateHTMLWipTable(GetCurrentWip());
 CreateWipList();
-CreateHTMLWipLogView(await GetTitleWip(), '2024');
+CreateHTMLWipLogView(GetCurrentWip(), '2024');
 }
 
 export async function RemoveCurrentWip(status)
@@ -353,4 +354,71 @@ switch (status)
         break;
     }
 
+}
+
+export async function InitialiseMonthView()
+{
+let stitchlog = await LoadStitchLogFile();
+let wiptable = await LoadWipTableFile();
+const mon = GetCurrentMonth();
+const yr = GetCurrentYear();
+let daysinmo = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];    // number of days in each month
+const months = ["January", "Feburary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const table = document.getElementById('wipoverview');
+
+if((yr % 4) === 0)  // accounting for the leap year
+    daysinmo[1] = 29;
+
+let recsinmon = stitchlog.findRecordsInMonth(mon, yr);
+let wipsinmon = [];
+{   // getting all the wips in the month
+let wipids = [];
+recsinmon.forEach(record => {   // going through each record
+    const loc = stitchlog.findRecord(record);   // finds the record
+    wipids.push(stitchlog.wipID[loc]); // adds each wip id to the list
+});
+wipsinmon = wipids.filter((value, index, array) => { return array.indexOf(value) === index; });    // makes the array only have unique values
+}
+
+{   // adding the day identifier
+const nrow = table.insertRow(); // creates the new row
+const hcell = document.createElement('th'); // adds the header element
+hcell.textContent = 'Day';  // set the content of the header to be day
+hcell.rowSpan = 2;  // make it span 2 rows
+nrow.appendChild(hcell);
+
+let days = [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ];
+
+for (let i = 0; i < daysinmo[mon - 1]; i++)
+    {
+    const tmpCell = document.createElement('td');   // create the new cell element
+    tmpCell.textContent = days[i % 7];    // adding the day to the cell
+    nrow.appendChild(tmpCell);
+    }
+}
+
+{   // sorting out the number row
+const nrow = table.insertRow(); // creates the new row
+
+for (let i = 0; i < daysinmo[mon - 1]; i++)
+    {
+    const tmpCell = document.createElement('td');   // create the new cell element
+    tmpCell.textContent = (i + 1).toString();    // adding the date to the cell
+    nrow.appendChild(tmpCell);
+    }
+}
+
+for (let i = 0; i < wipsinmon.length; i++)  // goes through all of the wips
+    {
+    const nrow = table.insertRow(); // creates the new row
+    const hcell = document.createElement('th'); // adds the header element
+    hcell.textContent = wiptable.wipName[wiptable.findWip(wipsinmon[i])];  // set the content of the header to be the wip name
+    nrow.appendChild(hcell);
+
+    for (let i = 0; i < daysinmo[mon - 1]; i++)
+        {
+        const tmpCell = document.createElement('td');   // create the new cell element
+        nrow.appendChild(tmpCell);
+        }
+    }
 }
