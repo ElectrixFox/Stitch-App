@@ -223,6 +223,7 @@ export class StitchLog
     }
     
     getRecordWipID(recID) { return this.wipID[this.findRecord(recID)]; }
+    getRecordDate(recID) { return this.recDate[this.findRecord(recID)]; }
 
     getRecordYear(recID)
     {

@@ -365,25 +365,6 @@ const yr = GetCurrentYear();
 let daysinmo = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];    // number of days in each month
 const months = ["January", "Feburary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const table = document.getElementById('wipoverview');
-
-/*
-
-Entry 1:
-Entry 2:
-Entry 3:
-.
-.
-.
-Entry n:
-
-Find all records in the month.
-Find all records for that WIP.
-Add the record type to the list at that point
-
-Find all records for that wip in the month
-
-*/
-
 let entries = [];
 
 if((yr % 4) === 0)  // accounting for the leap year
@@ -400,16 +381,21 @@ recsinmon.forEach(record => {   // going through each record
 wipsinmon = wipids.filter((value, index, array) => { return array.indexOf(value) === index; });    // makes the array only have unique values
 }
 
+
 wipsinmon.forEach(wipid => {   // going through each record
+    let narr = [];
+    narr.fill(0, 0, daysinmo[mon - 1] - 1);  // fills the entries of the array with 0's
+    
     for(let i = 0; i < recsinmon.length; i++)   // go through each record in the month
         {
         if(stitchlog.getRecordWipID(recsinmon[i]) === wipid)    // if the record is for the same wip
             {
-            
+            const day = getDateDay(stitchlog.getRecordDate(recsinmon[i]));  // gets the day of the date of the record
+            narr[day - 1] = stitchlog.recStatus[i]; // adds the record with the record status at the day to the new array
             }
         }
+    entries.push(narr); // adds the temp array to the entries
 });
-
 
 
 {   // adding the day identifier
@@ -448,13 +434,14 @@ for (let i = 0; i < wipsinmon.length; i++)  // goes through all of the wips
     hcell.textContent = wiptable.wipName[wiptabloc];  // set the content of the header to be the wip name
     nrow.appendChild(hcell);
 
-    for (let i = 0; i < daysinmo[mon - 1]; i++)
+    for (let j = 0; j < daysinmo[mon - 1]; j++)
         {
         const tmpCell = document.createElement('td');   // create the new cell element
+        
+        if (entries[i][j] !== 0)    // if there is an entry
+            tmpCell.textContent = entries[i][j];    // set the content of the cell   
 
-        if(getDateDay(wiptable.w))
-
-        nrow.appendChild(tmpCell);
+        nrow.appendChild(tmpCell);  // adds the cell to the new row
         }
     }
 }
