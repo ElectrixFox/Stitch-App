@@ -29,4 +29,4 @@ app.get ('/index', (req, res) => {
 app.use('/wips', wipRouter);   // use the wip router
 app.use('/', fileRouter);   // use the file router
 
-app.listen(port, hostname);   // removed the host name to be able to go to the site on external devices
+app.listen(port);   // removed the host name to be able to go to the site on external devices

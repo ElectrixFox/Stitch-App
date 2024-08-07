@@ -1,4 +1,4 @@
-import { DateComp } from '/js/utilities.js';
+import { DateComp, GetHostURL } from '/js/utilities.js';
 
 function SaveJSONFile(filename, data)
 {
@@ -6,7 +6,7 @@ const blob = new Blob([JSON.stringify(data, null, 2)], { // creates json blob wi
     type: "application/json",
 });
 
-const url = 'http://localhost:8000/write-file?name=' + filename + '.json'; // url to upload to
+const url = 'http://' + GetHostURL() + '/write-file?name=' + filename + '.json'; // url to upload to
 
 const formdata = new FormData();    // creates the new form to attatch the data to
 formdata.append('file', blob, filename + '.json'); // adds the data to the form
@@ -30,8 +30,7 @@ fetch(url, {
 
 function LoadJSONFile(filename)
 {
-const url = 'http://localhost:8000/read-file?name=' + filename + '.json'; // url to load from
-
+const url = 'http://' + GetHostURL() + '/read-file?name=' + filename + '.json'; // url to load from
 const res = fetch(url)  // setting the result to be the fetched data
 .then(response => { // sorting the responce
     if (!response.ok)   // if the responce is bad

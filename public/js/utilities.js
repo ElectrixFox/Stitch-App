@@ -71,3 +71,6 @@ return res;
 // WARNING: unused
 // replaces a section of the string (str) with item from start to end
 export function ReplaceSection(str, start, end, item) { return str.slice(start - 1, end) + item + str.slice(end + 1); }
+
+// gets the host name from the url
+export function GetHostURL() { return window.location.host; }
