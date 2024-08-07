@@ -1,4 +1,4 @@
-import { DateComp, GetHostURL } from '/js/utilities.js';
+import { DateComp, GetHostURL, toInt } from '/js/utilities.js';
 
 function SaveJSONFile(filename, data)
 {
@@ -221,6 +221,8 @@ export class StitchLog
         }
     return -1;
     }
+    
+    getRecordWipID(recID) { return this.wipID[this.findRecord(recID)]; }
 
     getRecordYear(recID)
     {
@@ -440,7 +442,7 @@ for(let i = 0; i < jsonData.length; i++)    // loop through all of the entries
     let item = jsonData[i]; // getting each json entry
 
     // adding the new item
-    new_wipID.push(item['wipID']);
+    new_wipID.push(toInt(item['wipID']));
     new_wipName.push(item['wipName']);
     new_designer.push(item['designer']);
     new_stDate.push(item['stDate']);
@@ -466,8 +468,8 @@ for(let i = 0; i < jsonData.length; i++)    // loop through all of the entries
     let item = jsonData[i]; // getting each json entry
 
     // adding the new item
-    strids.push(item['strecID']);
-    wipids.push(item['wipID']);
+    strids.push(toInt(item['strecID']));
+    wipids.push(toInt(item['wipID']));
     recdats.push(item['recDate']);
     recstats.push(item['recStatus']);
     }

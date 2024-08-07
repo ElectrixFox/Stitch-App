@@ -366,6 +366,26 @@ let daysinmo = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];    // number of
 const months = ["January", "Feburary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const table = document.getElementById('wipoverview');
 
+/*
+
+Entry 1:
+Entry 2:
+Entry 3:
+.
+.
+.
+Entry n:
+
+Find all records in the month.
+Find all records for that WIP.
+Add the record type to the list at that point
+
+Find all records for that wip in the month
+
+*/
+
+let entries = [];
+
 if((yr % 4) === 0)  // accounting for the leap year
     daysinmo[1] = 29;
 
@@ -379,6 +399,18 @@ recsinmon.forEach(record => {   // going through each record
 });
 wipsinmon = wipids.filter((value, index, array) => { return array.indexOf(value) === index; });    // makes the array only have unique values
 }
+
+wipsinmon.forEach(wipid => {   // going through each record
+    for(let i = 0; i < recsinmon.length; i++)   // go through each record in the month
+        {
+        if(stitchlog.getRecordWipID(recsinmon[i]) === wipid)    // if the record is for the same wip
+            {
+            
+            }
+        }
+});
+
+
 
 {   // adding the day identifier
 const nrow = table.insertRow(); // creates the new row
@@ -412,12 +444,16 @@ for (let i = 0; i < wipsinmon.length; i++)  // goes through all of the wips
     {
     const nrow = table.insertRow(); // creates the new row
     const hcell = document.createElement('th'); // adds the header element
-    hcell.textContent = wiptable.wipName[wiptable.findWip(wipsinmon[i])];  // set the content of the header to be the wip name
+    const wiptabloc = wiptable.findWip(wipsinmon[i]);   // gets the location of the wip in the wiptable
+    hcell.textContent = wiptable.wipName[wiptabloc];  // set the content of the header to be the wip name
     nrow.appendChild(hcell);
 
     for (let i = 0; i < daysinmo[mon - 1]; i++)
         {
         const tmpCell = document.createElement('td');   // create the new cell element
+
+        if(getDateDay(wiptable.w))
+
         nrow.appendChild(tmpCell);
         }
     }
