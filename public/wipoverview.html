@@ -4,10 +4,11 @@
     <link rel="stylesheet" href="css/styles.css">
     <script src="js/main.js" type="module"> </script>
      <script type="module">
-        import { InitialiseMonthView } from './js/main.js';
+        import { InitialiseMonthView, InitialiseMonthDropDown } from './js/main.js';
         
         window.onload = () => {
             InitialiseMonthView();
+            InitialiseMonthDropDown();
         }
      </script>
     <title>Wip Overview</title>
@@ -22,7 +23,16 @@
             <li class="item"><a href="#">Quick Links</a> </li>
         </ul>
     </nav>
-    <table class="wipmonview" id="wipoverview">  <!-- change class to "wipMonView" once the styling has been completed -->
+    <div class="mondrpdwn">
+        <button class="mondrpbtn">Month</button>
+        <div class="mondrpdwn-content" id="mondropdwn">
+        </div>     
+    </div>
+    <div>
+        <button class="btn-rem item-right" id="ch_view"><a href="../wips/wipview?w=1">Change View</a></button>
+    </div>
+    <hr>
+    <table class="wipmonview" id="wipoverview">  <!-- change class to "wipmonview" once the styling has been completed -->
         <caption>
             Month view
         </caption>

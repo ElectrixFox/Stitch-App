@@ -447,3 +447,20 @@ for (let i = 0; i < wipsinmon.length; i++)  // goes through all of the wips
         }
     }
 }
+
+export function InitialiseMonthDropDown()
+{
+const dropcont = document.getElementById('mondropdwn');
+const months = ["January", "Feburary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+for (let i = 0; i < months.length; i++) // loop through all of the months
+    {
+    let tmpitem = document.createElement('a');  // create the item element
+
+    tmpitem.href = '/wips/wipoverview?m=' + (i + 1).toString() + '&y=' + GetCurrentYear().toString();   // create the location address
+    tmpitem.textContent = months[i];    // set the month text
+
+    dropcont.appendChild(tmpitem);  // add the item to the dropdown
+    }
+
+}
