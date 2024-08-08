@@ -205,6 +205,7 @@ let table = document.getElementById("wipYearView");
 let logcells = [];
 let logrecords = stitchlog.findRecordsForWip(wipid);    // gets all of the log records for the given wip
 const wiploc = wiptable.findWip(wipid);   // finds the wip in the wip table
+let entries = [];
 
 if ((toInt(year) % 4) === 0)    // if it is a leap year
     daysinmo[1] = 29;   // set Feb to have 29 days
@@ -234,6 +235,7 @@ for (let i = 0; i < logcells.length; i++)
     td.appendChild(inp);    // adds the input to the new cell
     }
 
+console.log(logrecords);
 for (let i = 0; i < logrecords.length; i++) 
     {
     if(stitchlog.getRecordYear(logrecords[i]) !== year) // if the year of the record isn't the same year as the input year
@@ -298,9 +300,9 @@ wiptable.SaveFile();    // saves the new wip table
 
 export async function InitialiseWipView()
 {
-CreateHTMLWipTable(GetCurrentWip());
+CreateHTMLWipTable(toInt(GetCurrentWip()));
 CreateWipList();
-CreateHTMLWipLogView(GetCurrentWip(), '2024');
+CreateHTMLWipLogView(toInt(GetCurrentWip()), '2024');
 }
 
 export async function RemoveCurrentWip(status)

@@ -80,7 +80,7 @@ export class WipsTable
 
     findWipName(wipnam)
     {
-    for (let i = 0; i < this.nowips; i++)   // loop through all of the wips
+    for (let i = 0; i < this.wipID.length; i++)   // loop through all of the wips
         {
         if(this.wipName[i] === wipnam) // if the wip with the correct name is found then exit the loop
             {
@@ -92,7 +92,7 @@ export class WipsTable
 
     findNextNumber()
     {
-    let tmpno = this.nowips;
+    let tmpno = this.wipID.length;
     let find = this.findWip(tmpno);
 
     while (find != -1)  // while the wips are being found
@@ -120,8 +120,6 @@ export class WipsTable
     this.fabric.push(fabric);
     this.floss.push(floss);
     this.notes.push(notes);
-    
-    this.nowips += 1;
 
     return wipID;
     }
@@ -140,8 +138,6 @@ export class WipsTable
     this.fabric.splice(loc, 1);
     this.floss.splice(loc, 1);
     this.notes.splice(loc, 1);
-
-    this.nowips -= 1;
     }
 
     SetWip(wipID, wipName, designer, stDate, finDate, stitchcount, fabric, floss, notes)
@@ -166,7 +162,7 @@ export class WipsTable
     {
     let items = []
     
-    for(let i = 0; i < this.nowips; i++)    // loop through all of the entries
+    for(let i = 0; i < this.wipID.length; i++)    // loop through all of the entries
         {
         let item = { 
             wipID:          this.wipID[i],
@@ -204,7 +200,6 @@ export class StitchLog
         this.recDate = recDate;
         this.recStatus = recStatus;
         
-        this.loglen = this.strecID.length;
         this.SortLogByDate();
         }
 
@@ -263,15 +258,15 @@ export class StitchLog
     // Improvement: change the sort to being an insertion or quick sort
     SortLogByDate()
     {
-    for (let i = 0; i < this.loglen; i++)
-        for (let j = 0; j < (this.loglen - i - 1); j++)
+    for (let i = 0; i < this.strecID.length; i++)
+        for (let j = 0; j < (this.strecID.length - i - 1); j++)
             if(DateComp(this.recDate[j], this.recDate[j + 1]) === 1)
                 this.SwapRecords(j, j + 1, 1);    
     }
 
     findNextNumber()
     {
-    let tmpno = this.loglen;
+    let tmpno = this.strecID.length;
     let find = this.findRecord(tmpno);
 
     while (find != -1)  // while the records are being found
@@ -294,8 +289,6 @@ export class StitchLog
     this.wipID.push(wipID);
     this.recDate.push(recDate);
     this.recStatus.push(recStatus);
-    
-    this.loglen += 1;
 
     this.SortLogByDate();
     }
@@ -309,8 +302,6 @@ export class StitchLog
     this.wipID.splice(loc, 1);
     this.recDate.splice(loc, 1);
     this.recStatus.splice(loc, 1);
-
-    this.loglen -= 1;
     }
 
     // returns IDs of records made on a date
@@ -322,7 +313,7 @@ export class StitchLog
     // Improvement: could probably turn this into a binary search to the first occurrence of the date
     // Improvement: possible improvement, stop adding when the date changes after adding has started
 
-    for (let i = 0; i < this.loglen; i++)    // loop through all records
+    for (let i = 0; i < this.strecID.length; i++)    // loop through all records
         {
         if (DateComp(this.recDate[i], date) === 0)   // if the record is on the same date as the input date
             {
@@ -361,7 +352,7 @@ export class StitchLog
     {
     let IDs = [];
 
-    for (let i = 0; i < this.loglen; i++)    // loop through all records
+    for (let i = 0; i < this.strecID.length; i++)    // loop through all records
         {
         if (this.wipID[i] === wipID)   // if the record is for the same wip and the input wip
             {
@@ -402,7 +393,7 @@ export class StitchLog
     {
     let items = []
     
-    for(let i = 0; i < this.loglen; i++)    // loop through all of the entries
+    for(let i = 0; i < this.strecID.length; i++)    // loop through all of the entries
         {
         let item = { 
             strecID:    this.strecID[i],
